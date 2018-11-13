@@ -1,8 +1,14 @@
 package com.example.pinkorange.vibrato;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,8 +19,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
+
 public class LiveWithSettings extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private BarVisualizer mVisualizer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +50,40 @@ public class LiveWithSettings extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        
+        requestVisualizerPermissions();
+        initializeAudioVisualizer();
+    }
+
+    private void requestVisualizerPermissions() {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.MODIFY_AUDIO_SETTINGS) == PackageManager.PERMISSION_DENIED)
+            Log.d("App", "No MODIFY_AUDIO_SETTINGS" );
+        else
+            Log.d("App", "Yes MODIFY_AUDIO_SETTINGS" );
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED)
+            Log.d("App", "No RECORD_AUDIO" );
+        else
+            Log.d("App", "Yes RECORD_AUDIO" );
+
+        Log.d("App","Requesting permissions" );
+        ActivityCompat.requestPermissions( this, new String[]
+                {
+                        Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                        Manifest.permission.RECORD_AUDIO
+                },1 );
+        Log.d("App","Requested perms");
+    }
+
+    private void initializeAudioVisualizer() {
+        mVisualizer = findViewById(R.id.bar);
+
+        MediaPlayer mAudioPlayer = MediaPlayer.create(this, R.raw.test);
+        mAudioPlayer.start();
+
+
+        int audioSessionId = mAudioPlayer.getAudioSessionId();
+        if (audioSessionId != -1)
+            mVisualizer.setAudioSessionId(audioSessionId);
     }
 
     @Override
@@ -97,5 +141,12 @@ public class LiveWithSettings extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mVisualizer != null)
+            mVisualizer.release();
     }
 }

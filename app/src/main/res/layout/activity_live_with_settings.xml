@@ -22,4 +22,14 @@
         app:headerLayout="@layout/nav_header_live_with_settings"
         app:menu="@menu/activity_live_with_settings_drawer" />
 
+    <com.gauravk.audiovisualizer.visualizer.BarVisualizer
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        custom:avDensity="0.8"
+        custom:avType="fill"
+        custom:avColor="@color/av_dark_blue"
+        custom:avSpeed="normal"/>
+
 </android.support.v4.widget.DrawerLayout>
