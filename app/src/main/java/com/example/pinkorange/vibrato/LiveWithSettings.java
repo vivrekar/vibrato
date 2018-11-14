@@ -53,6 +53,11 @@ public class LiveWithSettings extends AppCompatActivity
         
         requestVisualizerPermissions();
         initializeAudioVisualizer();
+        hapticFeedback();
+    }
+
+    private void hapticFeedback() {
+
     }
 
     private void requestVisualizerPermissions() {
