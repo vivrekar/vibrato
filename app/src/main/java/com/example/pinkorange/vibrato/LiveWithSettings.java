@@ -20,11 +20,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
+import com.immersion.touchsensesdk.HapticMediaPlayer;
 
 public class LiveWithSettings extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private BarVisualizer mVisualizer;
+    private HapticMediaPlayer mHapticMediaPlayer;
+
+    // Hardcoded credentials for Immersion library - not sure how hidden these have to be as they give them out to everyone
+    private static final String USERNAME = "73b1a62a174b9d4de4330e5fbf18cb6444a205e28f9cc6b13ce3732c3d6fe4e0";
+    private static final String PASSWORD = "FJJUGuja";
+    private static final String hapticFeedbackURI = "file:///android_asset/haptic/short_ramp_down.hapt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +60,28 @@ public class LiveWithSettings extends AppCompatActivity
         
         requestVisualizerPermissions();
         initializeAudioVisualizer();
-        hapticFeedback();
+        initializeHapticFeedback();
+        syncHapticFeedback();
     }
 
-    private void hapticFeedback() {
+    private void initializeHapticFeedback() {
+        try {
+            mHapticMediaPlayer = HapticMediaPlayer.create(this, USERNAME, PASSWORD);
+            int playerState = mHapticMediaPlayer.getPlayerInfo(HapticMediaPlayer.PlayerInfo.PLAYER_STATE);
+            if (playerState != HapticMediaPlayer.PlayerState.INITIALIZED) {
+                System.out.println("Error creating haptic feedback player");
+            }
+        } catch (IllegalStateException e) {
+            System.out.println(".jar and .so versions do not match");
+        }
+
+        int resourceId = mHapticMediaPlayer.addResource(hapticFeedbackURI, HapticMediaPlayer.HapticEffectType.SYNC_HAPTIC_EFFECT);
+        if (resourceId <= 0) {
+            System.out.println("Failed to load haptic feedback resource.");
+        }
+    }
+
+    private void syncHapticFeedback() {
 
     }
 
@@ -84,7 +109,6 @@ public class LiveWithSettings extends AppCompatActivity
 
         MediaPlayer mAudioPlayer = MediaPlayer.create(this, R.raw.test);
         mAudioPlayer.start();
-
 
         int audioSessionId = mAudioPlayer.getAudioSessionId();
         if (audioSessionId != -1)
@@ -153,5 +177,6 @@ public class LiveWithSettings extends AppCompatActivity
         super.onDestroy();
         if (mVisualizer != null)
             mVisualizer.release();
+        mHapticMediaPlayer.dispose();
     }
 }
