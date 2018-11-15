@@ -16,14 +16,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    splits {
-        abi {
-            enable true
-            reset()
-            include 'x86', 'armeabi-v7a', 'x86_64'
-            universalApk true
-        }
-    }
 }
 
 android.sourceSets.main.jniLibs.srcDirs = ['libs']
@@ -38,6 +30,4 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation files('libs/TouchSenseSDK-v2.2.41.jar')
-    implementation fileTree(include: 'TouchSenseSDK*.jar', dir: 'libs')
 }
