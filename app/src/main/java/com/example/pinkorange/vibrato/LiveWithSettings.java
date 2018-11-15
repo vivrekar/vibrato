@@ -1,9 +1,12 @@
 package com.example.pinkorange.vibrato;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -25,11 +28,7 @@ public class LiveWithSettings extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private BarVisualizer mVisualizer;
-
-    // Hardcoded credentials for Immersion library - not sure how hidden these have to be as they give them out to everyone
-    private static final String USERNAME = "73b1a62a174b9d4de4330e5fbf18cb6444a205e28f9cc6b13ce3732c3d6fe4e0";
-    private static final String PASSWORD = "FJJUGuja";
-    private static final String hapticFeedbackURI = "file:///android_asset/haptic/short_ramp_down.hapt";
+    private Vibrator vibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +54,11 @@ public class LiveWithSettings extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        
-        requestVisualizerPermissions();
-        initializeAudioVisualizer();
-        beginHapticFeedback();
-    }
 
-    private 
+        Rumble.init(getApplicationContext());
+        requestVisualizerPermissions();
+        initializeVisualizerAndFeedback();
+    }
 
     private void requestVisualizerPermissions() {
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.MODIFY_AUDIO_SETTINGS) == PackageManager.PERMISSION_DENIED)
@@ -82,15 +79,30 @@ public class LiveWithSettings extends AppCompatActivity
         Log.d("App","Requested perms");
     }
 
-    private void initializeAudioVisualizer() {
+    private void initializeVisualizerAndFeedback() {
         mVisualizer = findViewById(R.id.bar);
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         MediaPlayer mAudioPlayer = MediaPlayer.create(this, R.raw.test);
+        beginHapticFeedback();
         mAudioPlayer.start();
 
         int audioSessionId = mAudioPlayer.getAudioSessionId();
         if (audioSessionId != -1)
             mVisualizer.setAudioSessionId(audioSessionId);
+    }
+
+    private void beginHapticFeedback() {
+        Log.e("App", "Beginning haptic feedback");
+        try {
+            while (true) {
+                vibrator.vibrate(VibrationEffect.createOneShot(150, 10));
+                Log.e("App", "VIBRATING");
+                Thread.sleep(1000);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
