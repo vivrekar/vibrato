@@ -29,6 +29,8 @@ public class LiveWithSettings extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private BarVisualizer mVisualizer;
+    private HapticFeedback hapticFeedback;
+    private MediaPlayer mAudioPlayer;
     private Vibrator vibrator;
     private int recordedSongId;
 
@@ -91,9 +93,10 @@ public class LiveWithSettings extends AppCompatActivity
         mVisualizer = findViewById(R.id.bar);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
-        MediaPlayer mAudioPlayer = MediaPlayer.create(this, recordedSongId);
+        mAudioPlayer = MediaPlayer.create(this, recordedSongId);
 
-        Thread t = new Thread(new HapticFeedback());
+        hapticFeedback = new HapticFeedback();
+        Thread t = new Thread(hapticFeedback);
         t.start();
         mAudioPlayer.start();
 
@@ -105,6 +108,8 @@ public class LiveWithSettings extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+        mAudioPlayer.stop();
+        hapticFeedback.stop();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -168,14 +173,20 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private class HapticFeedback implements Runnable {
+        private volatile boolean exit = false;
+
         @Override
         public void run() {
             beginHapticFeedback();
         }
 
+        public void stop() {
+            exit = true;
+        }
+
         private void beginHapticFeedback() {
             try {
-                for (int i = 0; i < 230; i++) {
+                while (!exit & mAudioPlayer.isPlaying()) {
                     vibrator.vibrate(VibrationEffect.createOneShot(150, 10));
                     Thread.sleep(1000);
                 }

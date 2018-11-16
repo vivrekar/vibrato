@@ -39,6 +39,8 @@ public class SelectMusic extends AppCompatActivity {
     private void initializeSongList() {
         songList = new ArrayList<Song>();
         songList.add(new Song("Croatian Rhapsody", R.raw.croatian));
+        songList.add(new Song("High Score", R.raw.highscore));
+        songList.add(new Song("Unity", R.raw.unity));
     }
 
 
