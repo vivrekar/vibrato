@@ -2,6 +2,7 @@ package com.example.pinkorange.vibrato;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -29,11 +30,19 @@ public class LiveWithSettings extends AppCompatActivity
 
     private BarVisualizer mVisualizer;
     private Vibrator vibrator;
+    private int recordedSongId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_with_settings);
+
+        Intent intent = getIntent();
+        recordedSongId = intent.getIntExtra("id", -1);
+        if (recordedSongId == -1) {
+            Log.e("App", "Failed to pass the current song through activities");
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -55,7 +64,6 @@ public class LiveWithSettings extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Rumble.init(getApplicationContext());
         requestVisualizerPermissions();
         initializeVisualizerAndFeedback();
     }
@@ -83,8 +91,10 @@ public class LiveWithSettings extends AppCompatActivity
         mVisualizer = findViewById(R.id.bar);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
-        MediaPlayer mAudioPlayer = MediaPlayer.create(this, R.raw.test);
-        beginHapticFeedback();
+        MediaPlayer mAudioPlayer = MediaPlayer.create(this, recordedSongId);
+
+        Thread t = new Thread(new HapticFeedback());
+        t.start();
         mAudioPlayer.start();
 
         int audioSessionId = mAudioPlayer.getAudioSessionId();
@@ -92,18 +102,6 @@ public class LiveWithSettings extends AppCompatActivity
             mVisualizer.setAudioSessionId(audioSessionId);
     }
 
-    private void beginHapticFeedback() {
-        Log.e("App", "Beginning haptic feedback");
-        try {
-            while (true) {
-                vibrator.vibrate(VibrationEffect.createOneShot(150, 10));
-                Log.e("App", "VIBRATING");
-                Thread.sleep(1000);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void onBackPressed() {
@@ -167,5 +165,23 @@ public class LiveWithSettings extends AppCompatActivity
         super.onDestroy();
         if (mVisualizer != null)
             mVisualizer.release();
+    }
+
+    private class HapticFeedback implements Runnable {
+        @Override
+        public void run() {
+            beginHapticFeedback();
+        }
+
+        private void beginHapticFeedback() {
+            try {
+                for (int i = 0; i < 230; i++) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(150, 10));
+                    Thread.sleep(1000);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
