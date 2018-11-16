@@ -91,11 +91,19 @@ public class LiveWithSettings extends AppCompatActivity
 
     private void initializeVisualizerAndFeedback() {
         mVisualizer = findViewById(R.id.bar);
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
         mAudioPlayer = MediaPlayer.create(this, recordedSongId);
 
-        hapticFeedback = new HapticFeedback();
+        switch (recordedSongId) {
+            case R.raw.croatian:
+                hapticFeedback = new HapticFeedback(80,618);
+                break;
+            case R.raw.highscore:
+                hapticFeedback = new HapticFeedback(100, 538);
+                break;
+            case R.raw.unity:
+                hapticFeedback = new HapticFeedback(100, 555);
+                break;
+        }
         Thread t = new Thread(hapticFeedback);
         t.start();
         mAudioPlayer.start();
@@ -174,6 +182,12 @@ public class LiveWithSettings extends AppCompatActivity
 
     private class HapticFeedback implements Runnable {
         private volatile boolean exit = false;
+        private int vibrationTime, delay;
+
+        public HapticFeedback(int vibrationTime, int delay) {
+            this.vibrationTime = vibrationTime;
+            this.delay = delay;
+        }
 
         @Override
         public void run() {
@@ -185,10 +199,11 @@ public class LiveWithSettings extends AppCompatActivity
         }
 
         private void beginHapticFeedback() {
+            vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             try {
                 while (!exit & mAudioPlayer.isPlaying()) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(150, 10));
-                    Thread.sleep(1000);
+                    vibrator.vibrate(VibrationEffect.createOneShot(vibrationTime, 255));
+                    Thread.sleep(delay);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
