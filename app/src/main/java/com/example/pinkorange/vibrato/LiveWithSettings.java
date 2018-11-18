@@ -1,8 +1,10 @@
 package com.example.pinkorange.vibrato;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
+import android.media.audiofx.Equalizer;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
 import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
 
@@ -25,6 +28,9 @@ public class LiveWithSettings extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private BarVisualizer mVisualizer;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +59,7 @@ public class LiveWithSettings extends AppCompatActivity
         
         requestVisualizerPermissions();
         initializeAudioVisualizer();
+
     }
 
     private void requestVisualizerPermissions() {
@@ -79,7 +86,6 @@ public class LiveWithSettings extends AppCompatActivity
 
         MediaPlayer mAudioPlayer = MediaPlayer.create(this, R.raw.test);
         mAudioPlayer.start();
-
 
         int audioSessionId = mAudioPlayer.getAudioSessionId();
         if (audioSessionId != -1)
@@ -149,4 +155,5 @@ public class LiveWithSettings extends AppCompatActivity
         if (mVisualizer != null)
             mVisualizer.release();
     }
+
 }
