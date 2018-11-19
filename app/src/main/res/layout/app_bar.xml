@@ -20,6 +20,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_live_with_settings" />
+    <include layout="@layout/content_music" />
 
 </android.support.design.widget.CoordinatorLayout>
