@@ -13,7 +13,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="288dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="120dp"
         android:text="@string/recorded_music_button"
         app:layout_constraintBottom_toTopOf="@+id/buttonBass"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -30,5 +30,6 @@
         android:text="BassBoost"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent" />
 </android.support.constraint.ConstraintLayout>
