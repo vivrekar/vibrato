@@ -13,8 +13,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = new Intent(MainActivity.this, LiveWithSettings.class);
-        startActivity(intent);
+        Button recorded_music_button = findViewById(R.id.recorded_music_button);
+        recorded_music_button.setOnClickListener(new View.OnClickListener() {
+             public void onClick(View v) {
+                 Intent intent = new Intent(MainActivity.this, LiveWithSettings.class);
+                 startActivity(intent);
+             }
+         });
 
         Button bass = findViewById(R.id.buttonBass);
         bass.setOnClickListener(new View.OnClickListener() {
