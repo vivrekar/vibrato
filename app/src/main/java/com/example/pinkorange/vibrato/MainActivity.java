@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         bass.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {
-                Intent i = new Intent(getApplicationContext(), BassBooster.class);
+                Intent i = new Intent(MainActivity.this, BassBooster.class);
                 startActivity(i);
             }
         });
