@@ -37,9 +37,9 @@ public class SelectMusic extends AppCompatActivity {
 
     private void initializeSongList() {
         songList = new ArrayList<Song>();
-        songList.add(new Song("Croatian Rhapsody", R.raw.croatian));
-        songList.add(new Song("High Score", R.raw.highscore));
-        songList.add(new Song("Unity", R.raw.unity));
+        songList.add(new Song("Croatian Rhapsody", "Maksim Mrvica",R.raw.croatian));
+        songList.add(new Song("High Score", "Panda Eyes", R.raw.highscore));
+        songList.add(new Song("Unity", "The Fat Rat",R.raw.unity));
     }
 
 
@@ -64,7 +64,9 @@ public class SelectMusic extends AppCompatActivity {
             view = getLayoutInflater().inflate(R.layout.detailed_view, null);
             Song curSong = songList.get(i);
             TextView name = view.findViewById(R.id.song_name);
+            TextView artist = view.findViewById(R.id.song_artist);
             name.setText(curSong.name);
+            artist.setText(curSong.artist);
             return view;
         }
     }
