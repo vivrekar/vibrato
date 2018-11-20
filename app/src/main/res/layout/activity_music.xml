@@ -9,7 +9,7 @@
     tools:openDrawer="start">
 
     <include
-        layout="@layout/app_bar_live_with_settings"
+        layout="@layout/app_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -19,17 +19,18 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_live_with_settings"
-        app:menu="@menu/activity_live_with_settings_drawer" />
+        app:menu="@menu/activity_app_bar_drawer">
+
+    </android.support.design.widget.NavigationView>
 
     <com.gauravk.audiovisualizer.visualizer.BarVisualizer
-        xmlns:custom="http://schemas.android.com/apk/res-auto"
         android:id="@+id/bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        custom:avDensity="0.8"
-        custom:avType="fill"
-        custom:avColor="@color/av_dark_blue"
-        custom:avSpeed="normal"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:avColor="@color/av_dark_blue"
+        app:avDensity="0.8"
+        app:avSpeed="normal"
+        app:avType="fill" />
 
 </android.support.v4.widget.DrawerLayout>
