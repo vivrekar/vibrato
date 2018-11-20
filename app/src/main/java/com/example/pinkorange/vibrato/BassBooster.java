@@ -33,7 +33,7 @@ public class BassBooster extends AppCompatActivity {
         requestVisualizerPermissions();
 
         // MediaPlayer object (audio file in raw/test.mp3)
-        mMediaPlayer = MediaPlayer.create(this, R.raw.test);
+        mMediaPlayer = MediaPlayer.create(this, R.raw.croatian);
 
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override

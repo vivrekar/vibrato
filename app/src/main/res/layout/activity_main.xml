@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!--<Button
+        android:id="@+id/recorded"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Recorded Music"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />-->
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="150dp"
@@ -47,4 +59,5 @@
             android:text="BassBoost" />
     </LinearLayout>
 
+>>>>>>> 8c8ece76fad8f110dde1b69f16c91eb2d880886f
 </android.support.constraint.ConstraintLayout>

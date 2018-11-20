@@ -1,11 +1,13 @@
 package com.example.pinkorange.vibrato;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
-import android.media.audiofx.Equalizer;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -17,7 +19,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 
 import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
 
@@ -25,11 +26,22 @@ public class LiveWithSettings extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private BarVisualizer mVisualizer;
+    private HapticFeedback hapticFeedback;
+    private MediaPlayer mAudioPlayer;
+    private Vibrator vibrator;
+    private int recordedSongId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView(R.layout.activity_music);
+
+        Intent intent = getIntent();
+        recordedSongId = intent.getIntExtra("id", -1);
+        if (recordedSongId == -1) {
+            Log.e("App", "Failed to pass the current song through activities");
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -41,9 +53,9 @@ public class LiveWithSettings extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        
+
         requestVisualizerPermissions();
-        initializeAudioVisualizer();
+        initializeVisualizerAndFeedback();
     }
 
     private void requestVisualizerPermissions() {
@@ -65,10 +77,23 @@ public class LiveWithSettings extends AppCompatActivity
         Log.d("App","Requested perms");
     }
 
-    private void initializeAudioVisualizer() {
+    private void initializeVisualizerAndFeedback() {
         mVisualizer = findViewById(R.id.bar);
+        mAudioPlayer = MediaPlayer.create(this, recordedSongId);
 
-        MediaPlayer mAudioPlayer = MediaPlayer.create(this, R.raw.test);
+        switch (recordedSongId) {
+            case R.raw.croatian:
+                hapticFeedback = new HapticFeedback(80,618);
+                break;
+            case R.raw.highscore:
+                hapticFeedback = new HapticFeedback(100, 538);
+                break;
+            case R.raw.unity:
+                hapticFeedback = new HapticFeedback(100, 555);
+                break;
+        }
+        Thread t = new Thread(hapticFeedback);
+        t.start();
         mAudioPlayer.start();
 
         int audioSessionId = mAudioPlayer.getAudioSessionId();
@@ -76,8 +101,11 @@ public class LiveWithSettings extends AppCompatActivity
             mVisualizer.setAudioSessionId(audioSessionId);
     }
 
+
     @Override
     public void onBackPressed() {
+        mAudioPlayer.stop();
+        hapticFeedback.stop();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -131,4 +159,34 @@ public class LiveWithSettings extends AppCompatActivity
             mVisualizer.release();
     }
 
+    private class HapticFeedback implements Runnable {
+        private volatile boolean exit = false;
+        private int vibrationTime, delay;
+
+        public HapticFeedback(int vibrationTime, int delay) {
+            this.vibrationTime = vibrationTime;
+            this.delay = delay;
+        }
+
+        @Override
+        public void run() {
+            beginHapticFeedback();
+        }
+
+        public void stop() {
+            exit = true;
+        }
+
+        private void beginHapticFeedback() {
+            vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            try {
+                while (!exit & mAudioPlayer.isPlaying()) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(vibrationTime, 255));
+                    Thread.sleep(delay);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
