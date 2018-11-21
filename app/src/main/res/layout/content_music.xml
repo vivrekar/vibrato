@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".LiveWithSettings"
-    tools:showIn="@layout/app_bar">
+    tools:showIn="@layout/music_app_bar">
 
     <TextView
         android:id="@+id/title"
@@ -72,5 +72,15 @@
                 android:textSize="18sp" />
         </LinearLayout>
     </com.example.pinkorange.vibrato.FixedTopFadeEdgeScrollView>
+
+    <com.gauravk.audiovisualizer.visualizer.BarVisualizer
+        android:id="@+id/bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:avColor="@color/pink"
+        app:avDensity="0.8"
+        app:avSpeed="normal"
+        app:avType="fill" />
 
 </android.support.constraint.ConstraintLayout>

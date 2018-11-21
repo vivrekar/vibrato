@@ -23,8 +23,6 @@ import android.widget.TextView;
 
 import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
 
-import org.w3c.dom.Text;
-
 public class LiveWithSettings extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -32,6 +30,7 @@ public class LiveWithSettings extends AppCompatActivity
     private HapticFeedback hapticFeedback;
     private MediaPlayer mAudioPlayer;
     private Vibrator vibrator;
+    private Song recordedSong;
     private int recordedSongId;
 
     @Override
@@ -40,12 +39,23 @@ public class LiveWithSettings extends AppCompatActivity
         setContentView(R.layout.activity_music);
 
         Intent intent = getIntent();
-        recordedSongId = intent.getIntExtra("id", -1);
+        recordedSong = (Song) intent.getSerializableExtra("song");
+        recordedSongId = recordedSong.id;
 
-        // TODO: Set song title, artist
-        //TextView title = (TextView) findViewById(R.id.title);
-        //title.setText();
-        // TODO: Set song lyrics based on boolean switch from pullout menu
+        // Set song title and artist
+        TextView title = (TextView) findViewById(R.id.title);
+        title.setText(recordedSong.title);
+        TextView artist = (TextView) findViewById(R.id.artist);
+        artist.setText(recordedSong.artist);
+
+        // Set song lyrics
+        TextView lyrics = (TextView) findViewById(R.id.lyrics);
+        boolean lyricsOn = true; //TODO: Update this variable field to read lyrics toggle switch value
+        if (lyricsOn) {
+            lyrics.setText(recordedSong.lyrics);
+        } else {
+            lyrics.setText("");
+        }
 
         if (recordedSongId == -1) {
             Log.e("App", "Failed to pass the current song through activities");
