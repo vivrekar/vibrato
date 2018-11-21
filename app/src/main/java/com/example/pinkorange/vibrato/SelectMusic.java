@@ -3,6 +3,7 @@ package com.example.pinkorange.vibrato;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -22,6 +23,9 @@ public class SelectMusic extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_music);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         ListView listView = findViewById(R.id.list_view);
         MyAdapter myAdapter = new MyAdapter();
         listView.setAdapter(myAdapter);
@@ -32,7 +36,7 @@ public class SelectMusic extends AppCompatActivity {
                 Song cur_song = songs.get(i);
                 // TODO: bundle the song item and send the whole thing to the next intent
                 // TODO: so that the next screen can use song to set title, artist, lyrics
-                intent.putExtra("id", cur_song.songId);
+                intent.putExtra("song", cur_song);
                 startActivity(intent);
             }
         });
