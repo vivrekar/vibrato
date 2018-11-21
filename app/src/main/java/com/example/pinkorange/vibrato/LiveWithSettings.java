@@ -168,7 +168,7 @@ public class LiveWithSettings extends AppCompatActivity
 
         requestVisualizerPermissions();
         initializeVisualizerAndFeedback();
-        initializeAudioVisualizer();
+
 
 
 
@@ -260,10 +260,45 @@ public class LiveWithSettings extends AppCompatActivity
         Log.d("App","Requested perms");
     }
 
-    private void initializeAudioVisualizer() {
+    private void initializeVisualizerAndFeedback() {
         mVisualizer = findViewById(R.id.bar);
+        mAudioPlayer = MediaPlayer.create(this, recordedSongId);
 
-        mAudioPlayer = MediaPlayer.create(this, R.raw.test);
+        switch (recordedSongId) {
+            case R.raw.croatian:
+                hapticFeedback = new HapticFeedback(80,618);
+                break;
+            case R.raw.highscore:
+                hapticFeedback = new HapticFeedback(100, 538);
+                break;
+            case R.raw.unity:
+                hapticFeedback = new HapticFeedback(100, 555);
+                break;
+            case R.raw.christmas:
+                hapticFeedback = new HapticFeedback(90, 530);
+                break;
+            case R.raw.grilboyfriend:
+                hapticFeedback = new HapticFeedback(90, 520);
+                break;
+            case R.raw.forever:
+                hapticFeedback = new HapticFeedback(100, 565);
+                break;
+            case R.raw.alreadygone:
+                hapticFeedback = new HapticFeedback(100, 575);
+                break;
+            case R.raw.doesntmatter:
+                hapticFeedback = new HapticFeedback(100, 600);
+                break;
+            case R.raw.walkaway:
+                hapticFeedback = new HapticFeedback(100, 600);
+                break;
+            case R.raw.enen:
+                hapticFeedback = new HapticFeedback(100, 620);
+                break;
+
+        }
+        Thread t = new Thread(hapticFeedback);
+        t.start();
         mAudioPlayer.start();
 
         int audioSessionId = mAudioPlayer.getAudioSessionId();
