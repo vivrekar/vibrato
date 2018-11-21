@@ -13,46 +13,32 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class SelectMusic extends AppCompatActivity {
-    private ArrayList<Song> songList;
+    private SongStore ss = new SongStore();
+    private ArrayList<Song> songs = ss.getSongs();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initializeSongList();
         setContentView(R.layout.activity_select_music);
 
         ListView listView = findViewById(R.id.list_view);
-        MyAdaptor myAdaptor = new MyAdaptor();
-        listView.setAdapter(myAdaptor);
+        MyAdapter myAdapter = new MyAdapter();
+        listView.setAdapter(myAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(view.getContext(), LiveWithSettings.class);
-                Song cur_song = songList.get(i);
+                Song cur_song = songs.get(i);
                 intent.putExtra("id", cur_song.songId);
                 startActivity(intent);
             }
         });
     }
 
-    private void initializeSongList() {
-        songList = new ArrayList<Song>();
-        songList.add(new Song("Croatian Rhapsody", "Maksim Mrvica",R.raw.croatian));
-        songList.add(new Song("High Score", "Panda Eyes", R.raw.highscore));
-        songList.add(new Song("Unity", "The Fat Rat",R.raw.unity));
-        songList.add(new Song("Girlfriend/Boyfriend", "Blackstreet",R.raw.grilboyfriend));
-        songList.add(new Song("Forever", "Chris Brown",R.raw.forever));
-        songList.add(new Song("Already Gone", "Kelly Clarkson",R.raw.alreadygone));
-        songList.add(new Song("Doesn't Really Matter", "Janet Jackson",R.raw.doesntmatter));
-        songList.add(new Song("Walk Away", "Kelly Clarkson",R.raw.walkaway));
-        songList.add(new Song("Eh, Eh", "Lady GaGa",R.raw.enen));
-    }
-
-
-    private class MyAdaptor extends BaseAdapter{
+    private class MyAdapter extends BaseAdapter{
         @Override
         public int getCount() {
-            return songList.size();
+            return songs.size();
         }
 
         @Override
@@ -67,11 +53,11 @@ public class SelectMusic extends AppCompatActivity {
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-            view = getLayoutInflater().inflate(R.layout.detailed_view, null);
-            Song curSong = songList.get(i);
-            TextView name = view.findViewById(R.id.song_name);
+            view = getLayoutInflater().inflate(R.layout.song_item_view, null);
+            Song curSong = songs.get(i);
+            TextView title = view.findViewById(R.id.song_title);
+            title.setText(curSong.title);
             TextView artist = view.findViewById(R.id.song_artist);
-            name.setText(curSong.name);
             artist.setText(curSong.artist);
             return view;
         }

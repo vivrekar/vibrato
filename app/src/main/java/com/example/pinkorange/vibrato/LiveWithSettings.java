@@ -36,6 +36,9 @@ public class LiveWithSettings extends AppCompatActivity
         super.onCreate (savedInstanceState);
         setContentView(R.layout.activity_music);
 
+        // TODO: Set song title, artist
+        // TODO: Set song lyrics based on boolean switch from pullout menu
+
         Intent intent = getIntent();
         recordedSongId = intent.getIntExtra("id", -1);
         if (recordedSongId == -1) {

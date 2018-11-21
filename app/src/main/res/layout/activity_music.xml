@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        app:avColor="@color/av_dark_blue"
+        app:avColor="@color/pink"
         app:avDensity="0.8"
         app:avSpeed="normal"
         app:avType="fill" />
