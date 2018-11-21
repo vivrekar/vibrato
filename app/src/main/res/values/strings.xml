@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Vibrato</string>
+    <string name="welcome">Welcome!</string>
+    <string name="intro_text">To get started, select an option below.</string>
     <string name="title_select_music">Select Music</string>
     <string name="title_activity_live_with_settings">Feel the Music</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -8,7 +10,8 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="recorded_music_button">Recorded Music</string>
+    <string name="recorded_music_button">Select your music</string>
+    <string name="live_music_button">Live music</string>
     <string name="default_song_title">Default Song Title</string>
     <string name="default_artist">by Default Artist</string>
     <string name="default_lyrics">Lorem ipsum dolor sit amet, consectetur adipiscing elit\nAliquam sagittis libero eu risus mollis, quis mattis leo euismod\nPraesent feugiat nulla eget neque tristique accumsan.\nNunc et velit sit amet nisi rutrum porta.\nInteger eget turpis eu enim ullamcorper sagittis et eget libero.\nNulla at felis ac risus finibus tempor nec in dui.\nSed porta quam non est cursus, quis cursus justo aliquet.\nMauris consequat purus vitae est euismod, sed dapibus lacus vestibulum.\nMaecenas bibendum turpis eget scelerisque ultrices.\nNullam eget velit faucibus lacus imperdiet accumsan.\nMauris vestibulum neque nec leo suscipit, et interdum justo ullamcorper.\nQuisque sed diam laoreet, finibus neque ut, lacinia felis.\nEtiam quis est eleifend odio cursus condimentum.\nInteger ut odio eget elit volutpat consectetur at egestas quam.\nNullam nec neque ac libero commodo auctor nec nec ligula.\nMorbi eu dui at lacus varius viverra eget ac metus.</string>
