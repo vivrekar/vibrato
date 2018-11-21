@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="@string/default_song_title"
-        android:textSize="18sp" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/song_artist"
@@ -22,7 +22,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="@string/default_artist"
-        android:textSize="14sp"
+        android:textSize="16sp"
+        android:textStyle="italic"
         tools:layout_editor_absoluteY="48dp" />
 
 </LinearLayout>
