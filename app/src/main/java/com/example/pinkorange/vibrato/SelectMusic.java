@@ -40,6 +40,12 @@ public class SelectMusic extends AppCompatActivity {
         songList.add(new Song("Croatian Rhapsody", "Maksim Mrvica",R.raw.croatian));
         songList.add(new Song("High Score", "Panda Eyes", R.raw.highscore));
         songList.add(new Song("Unity", "The Fat Rat",R.raw.unity));
+        songList.add(new Song("Girlfriend/Boyfriend", "Blackstreet",R.raw.grilboyfriend));
+        songList.add(new Song("Forever", "Chris Brown",R.raw.forever));
+        songList.add(new Song("Already Gone", "Kelly Clarkson",R.raw.alreadygone));
+        songList.add(new Song("Doesn't Really Matter", "Janet Jackson",R.raw.doesntmatter));
+        songList.add(new Song("Walk Away", "Kelly Clarkson",R.raw.walkaway));
+        songList.add(new Song("Eh, Eh", "Lady GaGa",R.raw.enen));
     }
 
 
