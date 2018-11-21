@@ -110,6 +110,28 @@ public class LiveWithSettings extends AppCompatActivity
             case R.raw.unity:
                 hapticFeedback = new HapticFeedback(100, 555);
                 break;
+            case R.raw.christmas:
+                hapticFeedback = new HapticFeedback(90, 530);
+                break;
+            case R.raw.grilboyfriend:
+                hapticFeedback = new HapticFeedback(90, 520);
+                break;
+            case R.raw.forever:
+                hapticFeedback = new HapticFeedback(100, 565);
+                break;
+            case R.raw.alreadygone:
+                hapticFeedback = new HapticFeedback(100, 575);
+                break;
+            case R.raw.doesntmatter:
+                hapticFeedback = new HapticFeedback(100, 600);
+                break;
+            case R.raw.walkaway:
+                hapticFeedback = new HapticFeedback(100, 600);
+                break;
+            case R.raw.enen:
+                hapticFeedback = new HapticFeedback(100, 620);
+                break;
+
         }
         Thread t = new Thread(hapticFeedback);
         t.start();
