@@ -8,8 +8,8 @@
     <string name="action_settings">Settings</string>
 
     <string name="recorded_music_button">Recorded Music</string>
-    <string name="default_song_title">All I Want For Christmas Is You</string>
-    <string name="default_artist">by Mariah Carey</string>
-    <string name="default_lyrics">I don\'t want a lot for Christmas\nThere is just one thing I need\nAnd I don\'t care about the presents\nUnderneath the Christmas tree\n\nI don\'t need to hang my stocking\nThere upon the fireplace\nSanta Claus won\'t make me happy\nWith a toy on Christmas Day\n\nI just want you for my own\nMore than you could ever know\nMake my wish come true\nAll I want for Christmas\nIs you\nYou, baby\n\nOh, I won\'t ask for much this Christmas\nI won\'t even wish for snow\nAnd I\'m just gonna keep on waiting\nUnderneath the mistletoe\n\nI won\'t make a list and send it\nTo the North Pole for Saint Nick\nI won\'t even stay awake to\nHear those magic reindeer click\n\n\'Cause I just want you here tonight\nHolding on to me so tight\nWhat more can I do?\nCause baby all I want for Christmas is you\nYou\n\nOh-ho, all…\n</string>
+    <string name="default_song_title">Default Song Title</string>
+    <string name="default_artist">by Default Artist</string>
+    <string name="default_lyrics">Lorem ipsum dolor sit amet, consectetur adipiscing elit\nAliquam sagittis libero eu risus mollis, quis mattis leo euismod\nPraesent feugiat nulla eget neque tristique accumsan.\nNunc et velit sit amet nisi rutrum porta.\nInteger eget turpis eu enim ullamcorper sagittis et eget libero.\nNulla at felis ac risus finibus tempor nec in dui.\nSed porta quam non est cursus, quis cursus justo aliquet.\nMauris consequat purus vitae est euismod, sed dapibus lacus vestibulum.\nMaecenas bibendum turpis eget scelerisque ultrices.\nNullam eget velit faucibus lacus imperdiet accumsan.\nMauris vestibulum neque nec leo suscipit, et interdum justo ullamcorper.\nQuisque sed diam laoreet, finibus neque ut, lacinia felis.\nEtiam quis est eleifend odio cursus condimentum.\nInteger ut odio eget elit volutpat consectetur at egestas quam.\nNullam nec neque ac libero commodo auctor nec nec ligula.\nMorbi eu dui at lacus varius viverra eget ac metus.</string>
 
 </resources>
