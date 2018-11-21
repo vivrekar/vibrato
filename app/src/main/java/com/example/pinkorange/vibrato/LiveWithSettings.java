@@ -73,9 +73,11 @@ public class LiveWithSettings extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        /*TODO
         Intent intent = getIntent();
         recordedSong = (Song) intent.getSerializableExtra("song");
         recordedSongId = recordedSong.id;
+        recordedSongId = R.raw.alreadygone;
 
         // Set song title and artist
         TextView title = (TextView) findViewById(R.id.title);
@@ -89,7 +91,7 @@ public class LiveWithSettings extends AppCompatActivity
             lyrics.setText(recordedSong.lyrics);
         } else {
             lyrics.setText("");
-        }
+        }*/
 
         if (recordedSongId == -1) {
             Log.e("App", "Failed to pass the current song through activities");
@@ -135,19 +137,8 @@ public class LiveWithSettings extends AppCompatActivity
 
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         // MediaPlayer object (audio file in raw/test.mp3)
-        mAudioPlayer = MediaPlayer.create(this, recordedSongId);
+        mAudioPlayer = MediaPlayer.create(this, R.raw.test);
 
-        switch (recordedSongId) {
-            case R.raw.croatian:
-                hapticFeedback = new HapticFeedback(80,618);
-                break;
-            case R.raw.highscore:
-                hapticFeedback = new HapticFeedback(100, 538);
-                break;
-            case R.raw.unity:
-                hapticFeedback = new HapticFeedback(100, 555);
-                break;
-        }
         Thread t = new Thread(hapticFeedback);
         t.start();
 
@@ -262,9 +253,9 @@ public class LiveWithSettings extends AppCompatActivity
 
     private void initializeVisualizerAndFeedback() {
         mVisualizer = findViewById(R.id.bar);
-        mAudioPlayer = MediaPlayer.create(this, recordedSongId);
+        //mAudioPlayer = MediaPlayer.create(this, recordedSongId);
 
-        switch (recordedSongId) {
+        /*switch (recordedSongId) {
             case R.raw.croatian:
                 hapticFeedback = new HapticFeedback(80,618);
                 break;
@@ -296,7 +287,9 @@ public class LiveWithSettings extends AppCompatActivity
                 hapticFeedback = new HapticFeedback(100, 620);
                 break;
 
-        }
+        }*/
+        hapticFeedback = new HapticFeedback(100, 620);
+
         Thread t = new Thread(hapticFeedback);
         t.start();
         mAudioPlayer.start();
@@ -452,7 +445,9 @@ public class LiveWithSettings extends AppCompatActivity
                 vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 try {
                     while (!exit & mAudioPlayer.isPlaying()) {
-                        vibrator.vibrate(VibrationEffect.createOneShot(vibrationTime, 255));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            vibrator.vibrate(VibrationEffect.createOneShot(vibrationTime, 255));
+                        }
                         Thread.sleep(delay);
                     }
                 } catch (Exception e) {
