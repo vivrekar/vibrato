@@ -38,7 +38,7 @@ public class BassBooster extends AppCompatActivity {
         requestAudioPermissions();
 
         // MediaPlayer object (audio file in raw/test.mp3)
-        mMediaPlayer = MediaPlayer.create(this, R.raw.croatian);
+        mMediaPlayer = MediaPlayer.create(this, R.raw.test);
 
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -50,19 +50,6 @@ public class BassBooster extends AppCompatActivity {
 
         bassBoost();
         loudnessEnchance();
-
-        // When music stream ends
-        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                Log.e("-----------------------", "6");
-                mp.release();
-                Log.e("-----------------------", "7");
-                //when music stream ends playing
-            }
-        });
-
-
     }
 
     private void bassBoost() {
@@ -78,8 +65,6 @@ public class BassBooster extends AppCompatActivity {
 
             bassBoostSetting.strength = ((short) 1000 / 19);
             mBassBoost.setProperties(bassBoostSetting);
-            //mBassBoost.setStrength((short) 1000);
-            //mMediaPlayer.attachAuxEffect(mBassBoost.getId());
             mMediaPlayer.setAuxEffectSendLevel(1.0f);
 
         } else {
@@ -133,7 +118,7 @@ public class BassBooster extends AppCompatActivity {
         // Create the bars
 
         // Seek Bar
-        /*SeekBar seekBar = findViewById(R.id.loudness);
+        SeekBar seekBar = findViewById(R.id.loudness);
 
 
         // Change progress when slider position is changed
@@ -154,7 +139,7 @@ public class BassBooster extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
-        });*/
+        });
     }
 
 
