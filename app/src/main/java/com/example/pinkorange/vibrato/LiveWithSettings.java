@@ -19,8 +19,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
+
+import org.w3c.dom.Text;
 
 public class LiveWithSettings extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -36,11 +39,14 @@ public class LiveWithSettings extends AppCompatActivity
         super.onCreate (savedInstanceState);
         setContentView(R.layout.activity_music);
 
-        // TODO: Set song title, artist
-        // TODO: Set song lyrics based on boolean switch from pullout menu
-
         Intent intent = getIntent();
         recordedSongId = intent.getIntExtra("id", -1);
+
+        // TODO: Set song title, artist
+        //TextView title = (TextView) findViewById(R.id.title);
+        //title.setText();
+        // TODO: Set song lyrics based on boolean switch from pullout menu
+
         if (recordedSongId == -1) {
             Log.e("App", "Failed to pass the current song through activities");
         }

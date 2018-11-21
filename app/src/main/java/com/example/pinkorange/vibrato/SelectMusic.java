@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -29,6 +30,8 @@ public class SelectMusic extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(view.getContext(), LiveWithSettings.class);
                 Song cur_song = songs.get(i);
+                // TODO: bundle the song item and send the whole thing to the next intent
+                // TODO: so that the next screen can use song to set title, artist, lyrics
                 intent.putExtra("id", cur_song.songId);
                 startActivity(intent);
             }
@@ -54,6 +57,10 @@ public class SelectMusic extends AppCompatActivity {
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             view = getLayoutInflater().inflate(R.layout.song_item_view, null);
+            // TODO: Set background shape of song card
+            //LinearLayout songCard = findViewById(R.id.song_card);
+            //songCard.setBackground(getResources().getDrawable(R.drawable.rounded_rectangle));
+            // Add text details to song card
             Song curSong = songs.get(i);
             TextView title = view.findViewById(R.id.song_title);
             title.setText(curSong.title);
