@@ -100,14 +100,6 @@
             android:textAllCaps="true"
             android:textSize="18sp" />
 
-        <Button
-            android:id="@+id/buttonBass"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp"
-            android:text="BassBoost" />
     </LinearLayout>
 
 >>>>>>> 8c8ece76fad8f110dde1b69f16c91eb2d880886f
