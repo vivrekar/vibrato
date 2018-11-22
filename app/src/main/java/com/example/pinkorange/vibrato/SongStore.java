@@ -30,7 +30,7 @@ class SongStore {
         ));
         this.songs.add(new Song(
                 R.raw.grilboyfriend,
-                "Girlfriend/Boyfriend",
+                "Girlfriend Boyfriend",
                 "Blackstreet"
         ));
         this.songs.add(new Song(
@@ -55,8 +55,8 @@ class SongStore {
         ));
         this.songs.add(new Song(
                 R.raw.enen,
-                "Eh, Eh",
-                "Lady GaGa"
+                "Eh, Eh, Nothing Else I Can Say",
+                "Lady Gaga"
         ));
     }
 
