@@ -19,6 +19,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
@@ -42,21 +44,6 @@ public class LiveWithSettings extends AppCompatActivity
         recordedSong = (Song) intent.getSerializableExtra("song");
         recordedSongId = recordedSong.id;
 
-        // Set song title and artist
-        TextView title = (TextView) findViewById(R.id.title);
-        title.setText(recordedSong.title);
-        TextView artist = (TextView) findViewById(R.id.artist);
-        artist.setText(recordedSong.artist);
-
-        // Set song lyrics
-        TextView lyrics = (TextView) findViewById(R.id.lyrics);
-        boolean lyricsOn = true; //TODO: Update this variable field to read lyrics toggle switch value
-        if (lyricsOn) {
-            lyrics.setText(recordedSong.lyrics + "\n\n\n\n\n\n\n\n\n\n");
-        } else {
-            lyrics.setText("");
-        }
-
         if (recordedSongId == -1) {
             Log.e("App", "Failed to pass the current song through activities");
         }
@@ -72,6 +59,25 @@ public class LiveWithSettings extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Set song title and artist
+        TextView title = (TextView) findViewById(R.id.title);
+        title.setText(recordedSong.title);
+        TextView artist = (TextView) findViewById(R.id.artist);
+        artist.setText(recordedSong.artist);
+
+        // Set song lyrics
+        final TextView lyrics = (TextView) findViewById(R.id.lyrics);
+        Switch lyricsSwitch = (Switch) navigationView.getMenu().getItem(1).getActionView();
+        lyricsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    lyrics.setText(recordedSong.lyrics + "\n\n\n\n\n\n\n\n\n\n");
+                } else {
+                    lyrics.setText("");
+                }
+            }
+        });
 
         requestVisualizerPermissions();
         initializeVisualizerAndFeedback();

@@ -14,14 +14,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
-            android:name=".MainActivity"
-            android:label="Main Activity"
+        <activity android:name=".SplashActivity">
+            android:name=".SplashActivity"
+            android:label="Splash Screen"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity android:name=".MainActivity">
+            android:name=".MainActivity"
+            android:label="Main Activity"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
