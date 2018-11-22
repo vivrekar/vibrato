@@ -7,10 +7,12 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/menu_title"
-            android:icon="@drawable/round_menu_black_24"
+            android:icon="@drawable/round_menu_24"
             android:title="Menu" />
         <item
             android:id="@+id/display_lyrics_switch"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:title="Display Lyrics"
             app:actionLayout="@layout/switch_item"
             app:showAsAction="always" />

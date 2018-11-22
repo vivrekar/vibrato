@@ -52,7 +52,7 @@ public class LiveWithSettings extends AppCompatActivity
         TextView lyrics = (TextView) findViewById(R.id.lyrics);
         boolean lyricsOn = true; //TODO: Update this variable field to read lyrics toggle switch value
         if (lyricsOn) {
-            lyrics.setText(recordedSong.lyrics);
+            lyrics.setText(recordedSong.lyrics + "\n\n\n\n\n\n\n\n\n\n");
         } else {
             lyrics.setText("");
         }

@@ -23,13 +23,13 @@ public class MainActivity extends AppCompatActivity {
              }
          });
 
-        Button bass = findViewById(R.id.buttonBass);
+        /*Button bass = findViewById(R.id.buttonBass);
         bass.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {
                 Intent i = new Intent(MainActivity.this, BassBooster.class);
                 startActivity(i);
             }
-        });
+        });*/
     }
 }
