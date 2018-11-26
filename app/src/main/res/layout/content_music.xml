@@ -72,4 +72,10 @@
         </LinearLayout>
     </com.example.pinkorange.vibrato.FixedTopFadeEdgeScrollView>
 
+    <com.chibde.visualizer.BarVisualizer
+            android:id="@+id/visualizer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"/>
+
 </android.support.constraint.ConstraintLayout>
