@@ -95,10 +95,8 @@ public class LiveWithSettings extends AppCompatActivity
         song_notif_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-
-                } else {
-
-                }
+                        //TODO Implement song notifications
+                } 
             }
         });
 
@@ -107,17 +105,16 @@ public class LiveWithSettings extends AppCompatActivity
         vibrate_seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+                //TODO add what to do when we change vibration intensity (just take the progress,
+                // which is a value from 0-100 and multiply that into your curr vibration intensity?
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
             }
         });
 
@@ -133,12 +130,10 @@ public class LiveWithSettings extends AppCompatActivity
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
             }
         });
 
@@ -155,15 +150,12 @@ public class LiveWithSettings extends AppCompatActivity
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
             }
         });
-
 
         requestVisualizerPermissions();
         initializeVisualizerAndFeedback();
@@ -185,11 +177,10 @@ public class LiveWithSettings extends AppCompatActivity
             bassBoostSetting.strength = ((short) 1000 / 19);
             mBassBoost.setProperties(bassBoostSetting);
             mAudioPlayer.setAuxEffectSendLevel(1.0f);
-
         } else {
             Log.e("BassBooster", "audio session id  == -1");
         }
-
+        
         // Create the bars
         // Change progress when slider position is changed
         Log.e("here","--------------");
@@ -202,23 +193,12 @@ public class LiveWithSettings extends AppCompatActivity
         if (audioSessionId != -1) {
             Log.e("Get player audio sess", "Audio session ====================== -1");
             mLoudnessEnhancer = new LoudnessEnhancer(audioSessionId);
-
             // Gain is in mB (0mB = no amp)
             mLoudnessEnhancer.setTargetGain(0);
-
             mAudioPlayer.setAuxEffectSendLevel(1.0f);
         } else {
             Log.e("Loudness Enhancer", "audio session id  == -1");
         }
-
-        // Create the bars
-
-        // Seek Bar
-        //SeekBar seekBar = (SeekBar) sideMenu.findItem(R.id.loudness);
-
-
-        // Change progress when slider position is changed
-
     }
 
 
@@ -244,7 +224,6 @@ public class LiveWithSettings extends AppCompatActivity
     private void initializeVisualizerAndFeedback() {
         mVisualizer = findViewById(R.id.bar);
         mAudioPlayer = MediaPlayer.create(this, recordedSongId);
-
         switch (recordedSongId) {
             case R.raw.croatian:
                 hapticFeedback = new HapticFeedback(80,618);
@@ -287,7 +266,6 @@ public class LiveWithSettings extends AppCompatActivity
             mVisualizer.setAudioSessionId(audioSessionId);
     }
 
-
     @Override
     public void onBackPressed() {
         mAudioPlayer.stop();
@@ -304,7 +282,6 @@ public class LiveWithSettings extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.activity_app_bar_drawer, menu);
-
         return true;
     }
 
@@ -314,12 +291,6 @@ public class LiveWithSettings extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        //if (id == R.id.action_settings) {
-        //    return true;
-        //}
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -332,11 +303,6 @@ public class LiveWithSettings extends AppCompatActivity
         if (id == R.id.display_lyrics_switch) {
             // Handle the display lyrics action
         }
-
-
-
-        /*else if (id == R.id.__________) {}*/
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
