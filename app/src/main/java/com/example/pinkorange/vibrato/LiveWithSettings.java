@@ -139,7 +139,6 @@ public class LiveWithSettings extends AppCompatActivity
 
         loudness = (SeekBar) navigationView.getMenu().getItem(8).getActionView();
 
-
         loudness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -156,7 +155,7 @@ public class LiveWithSettings extends AppCompatActivity
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
-
+        
         requestVisualizerPermissions();
         initializeVisualizerAndFeedback();
         bassBoost();
@@ -180,10 +179,6 @@ public class LiveWithSettings extends AppCompatActivity
         } else {
             Log.e("BassBooster", "audio session id  == -1");
         }
-        
-        // Create the bars
-        // Change progress when slider position is changed
-        Log.e("here","--------------");
     }
 
     private void loudnessEnhance() {
@@ -200,7 +195,6 @@ public class LiveWithSettings extends AppCompatActivity
             Log.e("Loudness Enhancer", "audio session id  == -1");
         }
     }
-
 
     private void requestVisualizerPermissions() {
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.MODIFY_AUDIO_SETTINGS) == PackageManager.PERMISSION_DENIED)
@@ -255,7 +249,6 @@ public class LiveWithSettings extends AppCompatActivity
             case R.raw.enen:
                 hapticFeedback = new HapticFeedback(100, 620);
                 break;
-
         }
         Thread t = new Thread(hapticFeedback);
         t.start();
