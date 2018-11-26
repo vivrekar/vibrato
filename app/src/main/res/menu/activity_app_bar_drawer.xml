@@ -16,6 +16,40 @@
             android:title="Display Lyrics"
             app:actionLayout="@layout/switch_item"
             app:showAsAction="always" />
+        <item
+            android:id="@+id/song_change_notifications"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:title="Song Change Notifications "
+            app:actionLayout="@layout/switch_item"
+            app:showAsAction="always" />
+        <item
+            android:title = "Vibration Intensity" />
+        <item
+            android:id="@+id/vibration_seek"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:actionLayout="@layout/seek_bar_item"
+            app:showAsAction="always"
+            android:title="" />
+        <item
+            android:title = "Bass Boost" />
+        <item
+            android:id="@+id/bass_seek"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:title=""
+            app:actionLayout="@layout/seek_bar_item"
+            app:showAsAction="always" />
+        <item
+            android:title = "Volume Boost" />
+        <item
+            android:id="@+id/loudness_seek"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:title=""
+            app:actionLayout="@layout/seek_bar_item"
+            app:showAsAction="always" />
     </group>
 
 </menu>

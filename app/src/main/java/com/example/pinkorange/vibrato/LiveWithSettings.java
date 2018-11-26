@@ -5,9 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
+import android.media.audiofx.BassBoost;
+import android.media.audiofx.LoudnessEnhancer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -20,6 +24,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
+import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -34,6 +39,13 @@ public class LiveWithSettings extends AppCompatActivity
     private Vibrator vibrator;
     private Song recordedSong;
     private int recordedSongId;
+
+    private SeekBar vibrate_seek;
+    private SeekBar loudness;
+    private SeekBar bass;
+
+    private BassBoost mBassBoost;
+    private LoudnessEnhancer mLoudnessEnhancer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +91,108 @@ public class LiveWithSettings extends AppCompatActivity
             }
         });
 
+        Switch song_notif_switch = (Switch) navigationView.getMenu().getItem(2).getActionView();
+        song_notif_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                        //TODO Implement song notifications
+                } 
+            }
+        });
+
+        vibrate_seek = (SeekBar) navigationView.getMenu().getItem(4).getActionView();
+
+        vibrate_seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                //TODO add what to do when we change vibration intensity (just take the progress,
+                // which is a value from 0-100 and multiply that into your curr vibration intensity?
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+        bass = (SeekBar) navigationView.getMenu().getItem(6).getActionView();
+
+        bass.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mBassBoost.setEnabled(true);
+                mBassBoost.setStrength((short) (10 * progress));
+                Log.e("----", Short.toString(mBassBoost.getRoundedStrength()));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+        loudness = (SeekBar) navigationView.getMenu().getItem(8).getActionView();
+
+        loudness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mLoudnessEnhancer.setEnabled(true);
+                mLoudnessEnhancer.setTargetGain(5 * progress);
+                Log.e("----", Float.toString(mLoudnessEnhancer.getTargetGain()));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+        
         requestVisualizerPermissions();
         initializeVisualizerAndFeedback();
+        bassBoost();
+        loudnessEnhance();
+    }
+
+    private void bassBoost() {
+        // Bass Booster object (priority -- app with highest priority controls
+        // the equalizer, session id for audio sess -- attach to media player in same audio sess)
+        int audioSessionId = mAudioPlayer.getAudioSessionId();
+        if (audioSessionId != -1) {
+            Log.e("Get player audio sess", "Audio session ====================== -1");
+            mBassBoost = new BassBoost(0, audioSessionId);
+            BassBoost.Settings bassBoostSettingTemp = mBassBoost.getProperties();
+            BassBoost.Settings bassBoostSetting = new BassBoost.Settings(bassBoostSettingTemp.toString());
+
+            bassBoostSetting.strength = ((short) 1000 / 19);
+            mBassBoost.setProperties(bassBoostSetting);
+            mAudioPlayer.setAuxEffectSendLevel(1.0f);
+        } else {
+            Log.e("BassBooster", "audio session id  == -1");
+        }
+    }
+
+    private void loudnessEnhance() {
+        // Bass Booster object (priority -- app with highest priority controls
+        // the equalizer, session id for audio sess -- attach to media player in same audio sess)
+        int audioSessionId = mAudioPlayer.getAudioSessionId();
+        if (audioSessionId != -1) {
+            Log.e("Get player audio sess", "Audio session ====================== -1");
+            mLoudnessEnhancer = new LoudnessEnhancer(audioSessionId);
+            // Gain is in mB (0mB = no amp)
+            mLoudnessEnhancer.setTargetGain(0);
+            mAudioPlayer.setAuxEffectSendLevel(1.0f);
+        } else {
+            Log.e("Loudness Enhancer", "audio session id  == -1");
+        }
     }
 
     private void requestVisualizerPermissions() {
@@ -105,7 +217,6 @@ public class LiveWithSettings extends AppCompatActivity
     private void initializeVisualizerAndFeedback() {
         mVisualizer = findViewById(R.id.bar);
         mAudioPlayer = MediaPlayer.create(this, recordedSongId);
-
         switch (recordedSongId) {
             case R.raw.croatian:
                 hapticFeedback = new HapticFeedback(80,618);
@@ -137,7 +248,6 @@ public class LiveWithSettings extends AppCompatActivity
             case R.raw.enen:
                 hapticFeedback = new HapticFeedback(100, 620);
                 break;
-
         }
         Thread t = new Thread(hapticFeedback);
         t.start();
@@ -147,7 +257,6 @@ public class LiveWithSettings extends AppCompatActivity
         if (audioSessionId != -1)
             mVisualizer.setAudioSessionId(audioSessionId);
     }
-
 
     @Override
     public void onBackPressed() {
@@ -164,8 +273,7 @@ public class LiveWithSettings extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        // TODO: Delete R.menu.live_with_settings file
-        //getMenuInflater().inflate(R.menu.live_with_settings, menu);
+        //getMenuInflater().inflate(R.menu.activity_app_bar_drawer, menu);
         return true;
     }
 
@@ -175,12 +283,6 @@ public class LiveWithSettings extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        //if (id == R.id.action_settings) {
-        //    return true;
-        //}
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -192,8 +294,7 @@ public class LiveWithSettings extends AppCompatActivity
 
         if (id == R.id.display_lyrics_switch) {
             // Handle the display lyrics action
-        } /*else if (id == R.id.__________) {}*/
-
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
