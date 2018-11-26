@@ -169,7 +169,6 @@ public class LiveWithSettings extends AppCompatActivity
         if (audioSessionId != -1) {
             Log.e("Get player audio sess", "Audio session ====================== -1");
             mBassBoost = new BassBoost(0, audioSessionId);
-
             BassBoost.Settings bassBoostSettingTemp = mBassBoost.getProperties();
             BassBoost.Settings bassBoostSetting = new BassBoost.Settings(bassBoostSettingTemp.toString());
 
