@@ -33,7 +33,7 @@
             app:showAsAction="always"
             android:title="" />
         <item
-            android:title = "Bass" />
+            android:title = "Bass Boost" />
         <item
             android:id="@+id/bass_seek"
             android:layout_width="match_parent"
@@ -42,7 +42,7 @@
             app:actionLayout="@layout/seek_bar_item"
             app:showAsAction="always" />
         <item
-            android:title = "Loudness Enhancer" />
+            android:title = "Volume Boost" />
         <item
             android:id="@+id/loudness_seek"
             android:layout_width="match_parent"
