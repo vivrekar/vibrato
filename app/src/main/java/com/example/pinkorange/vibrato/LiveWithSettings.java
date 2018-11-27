@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.LoudnessEnhancer;
@@ -26,13 +25,14 @@ import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
-import com.chibde.visualizer.BarVisualizer;
 
+import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
 
 public class LiveWithSettings extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private BarVisualizer barVisualizer;
+    private BarVisualizer mVisualizer;
+
     private HapticFeedback hapticFeedback;
     private MediaPlayer mAudioPlayer;
     private Vibrator vibrator;
@@ -224,10 +224,12 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void initVisualizer() {
-        barVisualizer = findViewById(R.id.visualizer);
-        //barVisualizer.setColor(Color.argb(1, Color.red(219), Color.green(24), Color.blue(103)));
-        barVisualizer.setDensity(40);
-        barVisualizer.setPlayer(mAudioPlayer.getAudioSessionId());
+        mVisualizer = findViewById(R.id.visualizer);
+
+        int audioSessionId = mAudioPlayer.getAudioSessionId();
+        if (audioSessionId != -1) {
+            mVisualizer.setAudioSessionId(audioSessionId);
+        }
     }
 
     private HapticFeedback initHapticFeedback() {
@@ -316,6 +318,9 @@ public class LiveWithSettings extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (mVisualizer != null) {
+            mVisualizer.release();
+        }
     }
 
     private class HapticFeedback implements Runnable {

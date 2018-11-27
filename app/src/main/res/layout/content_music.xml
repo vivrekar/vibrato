@@ -72,10 +72,14 @@
         </LinearLayout>
     </com.example.pinkorange.vibrato.FixedTopFadeEdgeScrollView>
 
-    <com.chibde.visualizer.BarVisualizer
+    <com.gauravk.audiovisualizer.visualizer.BarVisualizer
             android:id="@+id/visualizer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp"
+            app:avColor="@color/pink"
+            app:avDensity="0.8"
+            app:avSpeed="normal"
+            app:avType="fill"/>
 
 </android.support.constraint.ConstraintLayout>
