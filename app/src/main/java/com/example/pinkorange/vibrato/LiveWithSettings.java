@@ -225,7 +225,7 @@ public class LiveWithSettings extends AppCompatActivity
 
     private void initVisualizer() {
         barVisualizer = findViewById(R.id.visualizer);
-        //barVisualizer.setColor(Color.argb(1, Color.red(206), Color.green(66), Color.blue(244)));
+        //barVisualizer.setColor(Color.argb(1, Color.red(219), Color.green(24), Color.blue(103)));
         barVisualizer.setDensity(40);
         barVisualizer.setPlayer(mAudioPlayer.getAudioSessionId());
     }
