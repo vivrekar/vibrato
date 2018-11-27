@@ -4,14 +4,13 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.LoudnessEnhancer;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -27,13 +26,13 @@ import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
+import com.chibde.visualizer.BarVisualizer;
 
-import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
 
 public class LiveWithSettings extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private BarVisualizer mVisualizer;
+    private BarVisualizer barVisualizer;
     private HapticFeedback hapticFeedback;
     private MediaPlayer mAudioPlayer;
     private Vibrator vibrator;
@@ -215,47 +214,61 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void initializeVisualizerAndFeedback() {
-        mVisualizer = findViewById(R.id.bar);
+        hapticFeedback = initHapticFeedback();
+
         mAudioPlayer = MediaPlayer.create(this, recordedSongId);
-        switch (recordedSongId) {
-            case R.raw.croatian:
-                hapticFeedback = new HapticFeedback(80,618);
-                break;
-            case R.raw.highscore:
-                hapticFeedback = new HapticFeedback(100, 538);
-                break;
-            case R.raw.unity:
-                hapticFeedback = new HapticFeedback(100, 555);
-                break;
-            case R.raw.christmas:
-                hapticFeedback = new HapticFeedback(90, 530);
-                break;
-            case R.raw.grilboyfriend:
-                hapticFeedback = new HapticFeedback(90, 520);
-                break;
-            case R.raw.forever:
-                hapticFeedback = new HapticFeedback(100, 565);
-                break;
-            case R.raw.alreadygone:
-                hapticFeedback = new HapticFeedback(100, 575);
-                break;
-            case R.raw.doesntmatter:
-                hapticFeedback = new HapticFeedback(100, 600);
-                break;
-            case R.raw.walkaway:
-                hapticFeedback = new HapticFeedback(100, 600);
-                break;
-            case R.raw.enen:
-                hapticFeedback = new HapticFeedback(100, 620);
-                break;
-        }
         Thread t = new Thread(hapticFeedback);
         t.start();
         mAudioPlayer.start();
+        initVisualizer();
+    }
 
-        int audioSessionId = mAudioPlayer.getAudioSessionId();
-        if (audioSessionId != -1)
-            mVisualizer.setAudioSessionId(audioSessionId);
+    private void initVisualizer() {
+        barVisualizer = findViewById(R.id.visualizer);
+        //barVisualizer.setColor(Color.argb(1, Color.red(219), Color.green(24), Color.blue(103)));
+        barVisualizer.setDensity(40);
+        barVisualizer.setPlayer(mAudioPlayer.getAudioSessionId());
+    }
+
+    private HapticFeedback initHapticFeedback() {
+        HapticFeedback songHapticFeedback = null;
+        switch (recordedSongId) {
+            case R.raw.croatian:
+                songHapticFeedback = new HapticFeedback(80,618);
+                break;
+            case R.raw.highscore:
+                songHapticFeedback = new HapticFeedback(100, 538);
+                break;
+            case R.raw.unity:
+                songHapticFeedback = new HapticFeedback(100, 555);
+                break;
+            case R.raw.christmas:
+                songHapticFeedback = new HapticFeedback(90, 530);
+                break;
+            case R.raw.grilboyfriend:
+                songHapticFeedback = new HapticFeedback(90, 520);
+                break;
+            case R.raw.forever:
+                songHapticFeedback = new HapticFeedback(100, 565);
+                break;
+            case R.raw.alreadygone:
+                songHapticFeedback = new HapticFeedback(100, 575);
+                break;
+            case R.raw.doesntmatter:
+                songHapticFeedback = new HapticFeedback(100, 600);
+                break;
+            case R.raw.walkaway:
+                songHapticFeedback = new HapticFeedback(100, 600);
+                break;
+            case R.raw.enen:
+                songHapticFeedback = new HapticFeedback(100, 620);
+                break;
+            default:
+                songHapticFeedback = null;
+                break;
+        }
+
+        return songHapticFeedback;
     }
 
     @Override
@@ -303,8 +316,6 @@ public class LiveWithSettings extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mVisualizer != null)
-            mVisualizer.release();
     }
 
     private class HapticFeedback implements Runnable {
