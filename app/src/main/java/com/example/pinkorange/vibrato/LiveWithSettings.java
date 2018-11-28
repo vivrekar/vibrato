@@ -1,15 +1,12 @@
 package com.example.pinkorange.vibrato;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.LoudnessEnhancer;
 import android.os.Bundle;
-import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -26,16 +23,13 @@ import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
-import com.chibde.visualizer.BarVisualizer;
-
 
 public class LiveWithSettings extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private BarVisualizer barVisualizer;
-    private HapticFeedback hapticFeedback;
+    private BarVisualizer mVisualizer;
+
     private MediaPlayer mAudioPlayer;
-    private Vibrator vibrator;
     private Song recordedSong;
     private int recordedSongId;
 
@@ -214,67 +208,19 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void initializeVisualizerAndFeedback() {
-        hapticFeedback = initHapticFeedback();
-
         mAudioPlayer = MediaPlayer.create(this, recordedSongId);
-        Thread t = new Thread(hapticFeedback);
-        t.start();
         mAudioPlayer.start();
-        initVisualizer();
-    }
 
-    private void initVisualizer() {
-        barVisualizer = findViewById(R.id.visualizer);
-        //barVisualizer.setColor(Color.argb(1, Color.red(219), Color.green(24), Color.blue(103)));
-        barVisualizer.setDensity(40);
-        barVisualizer.setPlayer(mAudioPlayer.getAudioSessionId());
-    }
-
-    private HapticFeedback initHapticFeedback() {
-        HapticFeedback songHapticFeedback = null;
-        switch (recordedSongId) {
-            case R.raw.croatian:
-                songHapticFeedback = new HapticFeedback(80,618);
-                break;
-            case R.raw.highscore:
-                songHapticFeedback = new HapticFeedback(100, 538);
-                break;
-            case R.raw.unity:
-                songHapticFeedback = new HapticFeedback(100, 555);
-                break;
-            case R.raw.christmas:
-                songHapticFeedback = new HapticFeedback(90, 530);
-                break;
-            case R.raw.grilboyfriend:
-                songHapticFeedback = new HapticFeedback(90, 520);
-                break;
-            case R.raw.forever:
-                songHapticFeedback = new HapticFeedback(100, 565);
-                break;
-            case R.raw.alreadygone:
-                songHapticFeedback = new HapticFeedback(100, 575);
-                break;
-            case R.raw.doesntmatter:
-                songHapticFeedback = new HapticFeedback(100, 600);
-                break;
-            case R.raw.walkaway:
-                songHapticFeedback = new HapticFeedback(100, 600);
-                break;
-            case R.raw.enen:
-                songHapticFeedback = new HapticFeedback(100, 620);
-                break;
-            default:
-                songHapticFeedback = null;
-                break;
+        int audioSessionId = mAudioPlayer.getAudioSessionId();
+        mVisualizer = findViewById(R.id.visualizer);
+        if (audioSessionId != -1) {
+            mVisualizer.setAudioSessionId(audioSessionId, this);
         }
-
-        return songHapticFeedback;
     }
 
     @Override
     public void onBackPressed() {
         mAudioPlayer.stop();
-        hapticFeedback.stop();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -316,36 +262,8 @@ public class LiveWithSettings extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-    }
-
-    private class HapticFeedback implements Runnable {
-        private volatile boolean exit = false;
-        private int vibrationTime, delay;
-
-        public HapticFeedback(int vibrationTime, int delay) {
-            this.vibrationTime = vibrationTime;
-            this.delay = delay;
-        }
-
-        @Override
-        public void run() {
-            beginHapticFeedback();
-        }
-
-        public void stop() {
-            exit = true;
-        }
-
-        private void beginHapticFeedback() {
-            vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            try {
-                while (!exit & mAudioPlayer.isPlaying()) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(vibrationTime, 255));
-                    Thread.sleep(delay);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (mVisualizer != null) {
+            mVisualizer.release();
         }
     }
 }
