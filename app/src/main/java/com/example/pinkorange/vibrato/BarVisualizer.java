@@ -28,10 +28,10 @@ import com.gauravk.audiovisualizer.utils.AVConstants;
 import java.util.Random;
 
 /**
- * Custom view to create bar visualizer
- * <p>
- * Created by gk
- */
+ * BarVisualizer.Java, custom view to create bar visualizer
+ * Created by GauravK, https://github.com/gauravk95/
+ * Modified by Vibrato Team member @justinma to extend edited BaseVisualizer class.
+ **/
 
 public class BarVisualizer extends BaseVisualizer {
 
