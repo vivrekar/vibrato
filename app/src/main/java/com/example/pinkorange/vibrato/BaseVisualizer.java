@@ -13,6 +13,14 @@
         See the License for the specific language governing permissions and
         limitations under the License.
 */
+
+/**
+ * BaseVisualizer.Java, Base class for Audio Visualizer
+ * Created by GauravK, https://github.com/gauravk95/
+ * Modified by Vibrato Team member @justinma by adding haptic feedback support.
+ **/
+
+
 package com.example.pinkorange.vibrato;
 
 import android.content.Context;
@@ -188,7 +196,8 @@ abstract public class BaseVisualizer extends View {
     }
 
     /**
-     * Sets the audio session id for the currently playing audio
+     * Sets the audio session id for the currently playing audio. Modified method signature to
+     * support haptic feedback.
      *
      * @param audioSessionId of the media to be visualised
      */
@@ -204,6 +213,7 @@ abstract public class BaseVisualizer extends View {
             public void onWaveFormDataCapture(Visualizer visualizer, byte[] bytes,
                                               int samplingRate) {
                 BaseVisualizer.this.mRawAudioBytes = bytes;
+                // Haptic Feedback support
                 double amplitude = (double) (bytes[0] & 0xFF);
                 if (amplitude > 149) {
                     hapticFeedback(amplitude, musicContext);
@@ -220,6 +230,7 @@ abstract public class BaseVisualizer extends View {
         mVisualizer.setEnabled(true);
     }
 
+    // Haptic Feedback support
     private void hapticFeedback(double amplitude, Context musicContext) {
         vibrator = (Vibrator) musicContext.getSystemService(Context.VIBRATOR_SERVICE);
         vibrator.vibrate(VibrationEffect.createOneShot(1000, (int) amplitude));
