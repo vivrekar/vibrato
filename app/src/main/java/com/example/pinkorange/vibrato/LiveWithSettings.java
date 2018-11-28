@@ -1,15 +1,10 @@
 package com.example.pinkorange.vibrato;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.LoudnessEnhancer;
 import android.os.Bundle;
-import android.os.Vibrator;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -148,8 +143,7 @@ public class LiveWithSettings extends AppCompatActivity
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
-        
-        requestVisualizerPermissions();
+
         initializeVisualizerAndFeedback();
         bassBoost();
         loudnessEnhance();
@@ -188,31 +182,12 @@ public class LiveWithSettings extends AppCompatActivity
         }
     }
 
-    private void requestVisualizerPermissions() {
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.MODIFY_AUDIO_SETTINGS) == PackageManager.PERMISSION_DENIED)
-            Log.d("App", "No MODIFY_AUDIO_SETTINGS" );
-        else
-            Log.d("App", "Yes MODIFY_AUDIO_SETTINGS" );
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED)
-            Log.d("App", "No RECORD_AUDIO" );
-        else
-            Log.d("App", "Yes RECORD_AUDIO" );
-
-        Log.d("App","Requesting permissions" );
-        ActivityCompat.requestPermissions( this, new String[]
-                {
-                        Manifest.permission.MODIFY_AUDIO_SETTINGS,
-                        Manifest.permission.RECORD_AUDIO
-                },1 );
-        Log.d("App","Requested perms");
-    }
-
     private void initializeVisualizerAndFeedback() {
         mAudioPlayer = MediaPlayer.create(this, recordedSongId);
         mAudioPlayer.start();
 
-        int audioSessionId = mAudioPlayer.getAudioSessionId();
         mVisualizer = findViewById(R.id.visualizer);
+        int audioSessionId = mAudioPlayer.getAudioSessionId();
         if (audioSessionId != -1) {
             mVisualizer.setAudioSessionId(audioSessionId, this);
         }
@@ -262,6 +237,9 @@ public class LiveWithSettings extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (mAudioPlayer != null) {
+            mAudioPlayer.release();
+        }
         if (mVisualizer != null) {
             mVisualizer.release();
         }
