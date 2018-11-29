@@ -30,21 +30,14 @@ public class MainActivity extends AppCompatActivity {
          });
 
         Button live_music_button = findViewById(R.id.live_music_button);
-        liveIntent = new Intent(MainActivity.this, LiveMusic.class);
+        liveIntent = new Intent(MainActivity.this, LiveWithSettings.class);
         live_music_button.setOnClickListener(new View.OnClickListener() {
              public void onClick(View v) {
+                 Log.e("App", "ASIOHXIOH");
+                 liveIntent.putExtra("live", true);
                  startActivity(liveIntent);
              }
          });
-
-        /*Button bass = findViewById(R.id.buttonBass);
-        bass.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v)
-            {
-                Intent i = new Intent(MainActivity.this, BassBooster.class);
-                startActivity(i);
-            }
-        });*/
     }
 
     private void requestPermissions() {

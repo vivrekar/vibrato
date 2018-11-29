@@ -33,9 +33,8 @@ public class SelectMusic extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(view.getContext(), LiveWithSettings.class);
                 Song cur_song = songs.get(i);
-                // TODO: bundle the song item and send the whole thing to the next intent
-                // TODO: so that the next screen can use song to set title, artist, lyrics
                 intent.putExtra("song", cur_song);
+                intent.putExtra("live", false);
                 startActivity(intent);
             }
         });
