@@ -27,14 +27,13 @@ import android.widget.TextView;
 
 public class LiveWithSettings extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
     private BarVisualizer mVisualizer;
 
     private MediaPlayer mAudioPlayer;
     private Song recordedSong;
     private int recordedSongId;
-    private boolean isLive;
 
+    private boolean isLive;
     private Thread liveMusicThread;
     private LiveMusicAnalysis liveMusicAnalysis;
 
