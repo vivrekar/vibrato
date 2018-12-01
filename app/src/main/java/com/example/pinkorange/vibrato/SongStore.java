@@ -58,6 +58,11 @@ class SongStore {
                 "Eh, Eh, Nothing Else I Can Say",
                 "Lady Gaga"
         ));
+        this.songs.add(new Song(
+                R.raw.entertainer,
+                "The Entertainer",
+                "Scott Joplin"
+        ));
     }
 
     ArrayList<Song> getSongs() {
