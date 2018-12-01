@@ -1,13 +1,18 @@
 package com.example.pinkorange.vibrato;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.AudioAttributes;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
+import android.media.AudioTrack;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.LoudnessEnhancer;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -26,193 +31,90 @@ import android.widget.TextView;
 
 public class LiveWithSettings extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
     private BarVisualizer mVisualizer;
 
     private MediaPlayer mAudioPlayer;
     private Song recordedSong;
     private int recordedSongId;
 
-    private SeekBar vibrate_seek;
-    private SeekBar loudness;
-    private SeekBar bass;
+    private boolean isLive;
+    private Thread liveMusicThread;
+    private LiveMusicAnalysis liveMusicAnalysis;
 
+    private Toolbar toolbar;
+    private DrawerLayout drawer;
+    private NavigationView navigationView;
+    private Switch song_notif_switch;
+
+    private SeekBar vibrate_seek, loudness, bass;
     private BassBoost mBassBoost;
     private LoudnessEnhancer mLoudnessEnhancer;
+
+    private void initVariables() {
+        Intent intent = getIntent();
+        isLive = intent.getBooleanExtra("live", false);
+
+        if (!isLive) {
+            recordedSong = (Song) intent.getSerializableExtra("song");
+            recordedSongId = recordedSong.id;
+            if (recordedSongId == -1) {
+                Log.e("App", "Failed to pass the current song through activities");
+            }
+        }
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        song_notif_switch = (Switch) navigationView.getMenu().getItem(2).getActionView();
+        vibrate_seek = (SeekBar) navigationView.getMenu().getItem(4).getActionView();
+        bass = (SeekBar) navigationView.getMenu().getItem(6).getActionView();
+        loudness = (SeekBar) navigationView.getMenu().getItem(8).getActionView();
+        mVisualizer = findViewById(R.id.visualizer);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView(R.layout.activity_music);
+        requestPermissions();
+        initVariables();
 
-        Intent intent = getIntent();
-        recordedSong = (Song) intent.getSerializableExtra("song");
-        recordedSongId = recordedSong.id;
-
-        if (recordedSongId == -1) {
-            Log.e("App", "Failed to pass the current song through activities");
-        }
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        setActionBarToggle();
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Set song title and artist
-        TextView title = (TextView) findViewById(R.id.title);
-        title.setText(recordedSong.title);
-        TextView artist = (TextView) findViewById(R.id.artist);
-        artist.setText(recordedSong.artist);
-
-        // Set song lyrics
-        final TextView lyrics = (TextView) findViewById(R.id.lyrics);
-        Switch lyricsSwitch = (Switch) navigationView.getMenu().getItem(1).getActionView();
-        lyricsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    lyrics.setText(recordedSong.lyrics + "\n\n\n\n\n\n\n\n\n\n");
-                } else {
-                    lyrics.setText("");
-                }
-            }
-        });
-
-        Switch song_notif_switch = (Switch) navigationView.getMenu().getItem(2).getActionView();
-        song_notif_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                        //TODO Implement song notifications
-                } 
-            }
-        });
-
-        vibrate_seek = (SeekBar) navigationView.getMenu().getItem(4).getActionView();
-
-        vibrate_seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                //TODO add what to do when we change vibration intensity (just take the progress,
-                // which is a value from 0-100 and multiply that into your curr vibration intensity?
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-
-        bass = (SeekBar) navigationView.getMenu().getItem(6).getActionView();
-
-        bass.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mBassBoost.setEnabled(true);
-                mBassBoost.setStrength((short) (10 * progress));
-                Log.e("----", Short.toString(mBassBoost.getRoundedStrength()));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-
-        loudness = (SeekBar) navigationView.getMenu().getItem(8).getActionView();
-
-        loudness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mLoudnessEnhancer.setEnabled(true);
-                mLoudnessEnhancer.setTargetGain(5 * progress);
-                Log.e("----", Float.toString(mLoudnessEnhancer.getTargetGain()));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-        
-        requestVisualizerPermissions();
+        setSongSwitchNotifications();
+        setVibrationSeekBar();
+        setBassSeekBar();
+        setLoudnessSeekBar();
         initializeVisualizerAndFeedback();
-        bassBoost();
-        loudnessEnhance();
-    }
 
-    private void bassBoost() {
-        // Bass Booster object (priority -- app with highest priority controls
-        // the equalizer, session id for audio sess -- attach to media player in same audio sess)
-        int audioSessionId = mAudioPlayer.getAudioSessionId();
-        if (audioSessionId != -1) {
-            Log.e("Get player audio sess", "Audio session ====================== -1");
-            mBassBoost = new BassBoost(0, audioSessionId);
-            BassBoost.Settings bassBoostSettingTemp = mBassBoost.getProperties();
-            BassBoost.Settings bassBoostSetting = new BassBoost.Settings(bassBoostSettingTemp.toString());
-
-            bassBoostSetting.strength = ((short) 1000 / 19);
-            mBassBoost.setProperties(bassBoostSetting);
-            mAudioPlayer.setAuxEffectSendLevel(1.0f);
-        } else {
-            Log.e("BassBooster", "audio session id  == -1");
+        if (!isLive) {
+            setSongDetails();
+            bassBoost();
+            loudnessEnhance();
         }
-    }
-
-    private void loudnessEnhance() {
-        // Bass Booster object (priority -- app with highest priority controls
-        // the equalizer, session id for audio sess -- attach to media player in same audio sess)
-        int audioSessionId = mAudioPlayer.getAudioSessionId();
-        if (audioSessionId != -1) {
-            Log.e("Get player audio sess", "Audio session ====================== -1");
-            mLoudnessEnhancer = new LoudnessEnhancer(audioSessionId);
-            // Gain is in mB (0mB = no amp)
-            mLoudnessEnhancer.setTargetGain(0);
-            mAudioPlayer.setAuxEffectSendLevel(1.0f);
-        } else {
-            Log.e("Loudness Enhancer", "audio session id  == -1");
-        }
-    }
-
-    private void requestVisualizerPermissions() {
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.MODIFY_AUDIO_SETTINGS) == PackageManager.PERMISSION_DENIED)
-            Log.d("App", "No MODIFY_AUDIO_SETTINGS" );
-        else
-            Log.d("App", "Yes MODIFY_AUDIO_SETTINGS" );
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED)
-            Log.d("App", "No RECORD_AUDIO" );
-        else
-            Log.d("App", "Yes RECORD_AUDIO" );
-
-        Log.d("App","Requesting permissions" );
-        ActivityCompat.requestPermissions( this, new String[]
-                {
-                        Manifest.permission.MODIFY_AUDIO_SETTINGS,
-                        Manifest.permission.RECORD_AUDIO
-                },1 );
-        Log.d("App","Requested perms");
     }
 
     private void initializeVisualizerAndFeedback() {
+        if (isLive) {
+            liveVisualizerAndFeedback();
+        } else {
+            recordedVisualizerAndFeedback();
+        }
+    }
+
+    private void liveVisualizerAndFeedback() {
+        liveMusicAnalysis = new LiveMusicAnalysis(this);
+        liveMusicThread = new Thread(liveMusicAnalysis);
+        liveMusicThread.start();
+    }
+
+    private void recordedVisualizerAndFeedback() {
         mAudioPlayer = MediaPlayer.create(this, recordedSongId);
         mAudioPlayer.start();
 
         int audioSessionId = mAudioPlayer.getAudioSessionId();
-        mVisualizer = findViewById(R.id.visualizer);
         if (audioSessionId != -1) {
             mVisualizer.setAudioSessionId(audioSessionId, this);
         }
@@ -220,7 +122,12 @@ public class LiveWithSettings extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        mAudioPlayer.stop();
+        if (!isLive) {
+            mAudioPlayer.stop();
+        } else {
+            liveMusicAnalysis.stop();
+        }
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -262,8 +169,241 @@ public class LiveWithSettings extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mVisualizer != null) {
+        if (mAudioPlayer != null)
+            mAudioPlayer.release();
+        if (mVisualizer != null)
             mVisualizer.release();
+        if (liveMusicAnalysis != null && isLive)
+            liveMusicAnalysis.release();
+    }
+
+    private void setLoudnessSeekBar() {
+        loudness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mLoudnessEnhancer.setEnabled(true);
+                mLoudnessEnhancer.setTargetGain(5 * progress);
+                Log.e("----", Float.toString(mLoudnessEnhancer.getTargetGain()));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+    }
+
+    private void setBassSeekBar() {
+        bass.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mBassBoost.setEnabled(true);
+                mBassBoost.setStrength((short) (10 * progress));
+                Log.e("----", Short.toString(mBassBoost.getRoundedStrength()));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+    }
+
+    private void setVibrationSeekBar() {
+        vibrate_seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                //TODO add what to do when we change vibration intensity (just take the progress,
+                // which is a value from 0-100 and multiply that into your curr vibration intensity?
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+    }
+
+    private void setSongSwitchNotifications() {
+        song_notif_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                        //TODO Implement song notifications
+                }
+            }
+        });
+    }
+
+    private void setSongDetails() {
+        TextView title = (TextView) findViewById(R.id.title);
+        title.setText(recordedSong.title);
+        TextView artist = (TextView) findViewById(R.id.artist);
+        artist.setText(recordedSong.artist);
+
+        // Set song lyrics
+        final TextView lyrics = (TextView) findViewById(R.id.lyrics);
+        Switch lyricsSwitch = (Switch) navigationView.getMenu().getItem(1).getActionView();
+        lyricsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    lyrics.setText(recordedSong.lyrics + "\n\n\n\n\n\n\n\n\n\n");
+                } else {
+                    lyrics.setText("");
+                }
+            }
+        });
+    }
+
+    private void setActionBarToggle() {
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+    }
+
+    private void bassBoost() {
+        // Bass Booster object (priority -- app with highest priority controls
+        // the equalizer, session id for audio sess -- attach to media player in same audio sess)
+        int audioSessionId = mAudioPlayer.getAudioSessionId();
+        if (audioSessionId != -1) {
+            Log.e("Get player audio sess", "Audio session ====================== -1");
+            mBassBoost = new BassBoost(0, audioSessionId);
+            BassBoost.Settings bassBoostSettingTemp = mBassBoost.getProperties();
+            BassBoost.Settings bassBoostSetting = new BassBoost.Settings(bassBoostSettingTemp.toString());
+
+            bassBoostSetting.strength = ((short) 1000 / 19);
+            mBassBoost.setProperties(bassBoostSetting);
+            mAudioPlayer.setAuxEffectSendLevel(1.0f);
+        } else {
+            Log.e("BassBooster", "audio session id  == -1");
         }
+    }
+
+    private void loudnessEnhance() {
+        // Bass Booster object (priority -- app with highest priority controls
+        // the equalizer, session id for audio sess -- attach to media player in same audio sess)
+        int audioSessionId = mAudioPlayer.getAudioSessionId();
+        if (audioSessionId != -1) {
+            Log.e("Get player audio sess", "Audio session ====================== -1");
+            mLoudnessEnhancer = new LoudnessEnhancer(audioSessionId);
+            // Gain is in mB (0mB = no amp)
+            mLoudnessEnhancer.setTargetGain(0);
+            mAudioPlayer.setAuxEffectSendLevel(1.0f);
+        } else {
+            Log.e("Loudness Enhancer", "audio session id  == -1");
+        }
+    }
+
+    private class LiveMusicAnalysis implements Runnable {  
+        private AudioRecord recorder;
+        private AudioTrack audioPlayer;
+        private Context musicContext;
+
+        private int audioSource, samplingRate, channelConfig, channelConfigOut, audioFormat, bufferSize;
+        private byte[] recordData = new byte[bufferSize];
+        private boolean isRecording;
+
+        public LiveMusicAnalysis(Context musicContext) {
+            this.musicContext = musicContext;
+            this.isRecording = false;
+            this.audioSource = MediaRecorder.AudioSource.MIC;
+            this.samplingRate = 44100;
+            this.channelConfig = AudioFormat.CHANNEL_IN_MONO;
+            this.channelConfigOut = AudioFormat.CHANNEL_OUT_MONO;
+            this.audioFormat = AudioFormat.ENCODING_PCM_16BIT;
+            this.bufferSize = 2048;
+            this.recordData = new byte[bufferSize];
+        }
+        
+        @Override
+        public void run() {
+            initAudioStreams();
+            listenAndPlay();
+        }
+
+        public void stop() {
+            this.isRecording = false;
+            this.audioPlayer.stop();
+            this.recorder.stop();
+        }
+
+        public void release() {
+            if (this.audioPlayer != null)
+                this.audioPlayer.release();
+            if (this.recorder != null)
+                this.recorder.release();
+        }
+
+        private void initVisualizer() {
+            int audioSessionId = audioPlayer.getAudioSessionId();
+            if (audioSessionId != -1) {
+                mVisualizer.setAudioSessionId(audioSessionId, this.musicContext);
+            }
+        }
+
+        private void initAudioStreams() {
+            this.recorder = new AudioRecord(audioSource, samplingRate, channelConfig, audioFormat, bufferSize);
+            if (this.recorder.getState() == AudioRecord.STATE_INITIALIZED) {
+                this.recorder.startRecording();
+            }
+
+            this.audioPlayer = new AudioTrack.Builder()
+                .setAudioAttributes(new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build())
+                .setAudioFormat(new AudioFormat.Builder()
+                        .setEncoding(this.audioFormat)
+                        .setSampleRate(this.samplingRate)
+                        .setChannelMask(this.channelConfigOut)
+                        .build())
+                .setBufferSizeInBytes(this.bufferSize)
+                .build();
+
+            this.audioPlayer.setVolume(0);
+            if(this.audioPlayer.getPlayState() != AudioTrack.PLAYSTATE_PLAYING) {
+                this.audioPlayer.play();
+                initVisualizer();
+            }
+        }
+
+        private void listenAndPlay() {
+            int readBytes, writtenBytes = 0;
+            do {
+                readBytes = recorder.read(recordData, 0, bufferSize);
+
+                if(AudioRecord.ERROR_INVALID_OPERATION != readBytes){
+                    writtenBytes += audioPlayer.write(recordData, 0, readBytes);
+                }
+            } while (isRecording);
+        }
+    }
+
+     private void requestPermissions() {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.MODIFY_AUDIO_SETTINGS) == PackageManager.PERMISSION_DENIED)
+            Log.d("App", "No MODIFY_AUDIO_SETTINGS" );
+        else
+            Log.d("App", "Yes MODIFY_AUDIO_SETTINGS" );
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED)
+            Log.d("App", "No RECORD_AUDIO" );
+        else
+            Log.d("App", "Yes RECORD_AUDIO" );
+
+        Log.d("App","Requesting permissions" );
+        ActivityCompat.requestPermissions( this, new String[]
+                {
+                        Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                        Manifest.permission.RECORD_AUDIO
+                },1 );
+        Log.d("App","Requested perms");
     }
 }

@@ -4,19 +4,13 @@ import java.io.Serializable;
 
 public class Song implements Serializable {
     int id;
-    public String title;
-    public String artist = "Unknown Artist";
-    public String lyrics = "No Lyrics Found.";
-
-    Song(int id, String title) {
-        this.id = id;
-        this.title = title;
-    }
+    public String title, artist, lyrics;
 
     Song(int id, String title, String artist) {
         this.id = id;
         this.title = title;
         this.artist = artist;
+        this.lyrics = "No Lyrics Found.";
     }
 
     Song(int id, String title, String artist, String lyrics) {

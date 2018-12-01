@@ -1,8 +1,6 @@
 package com.example.pinkorange.vibrato;
 
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
@@ -10,15 +8,9 @@ import android.media.audiofx.LoudnessEnhancer;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
-
-import java.io.IOException;
-
 
 public class BassBooster extends AppCompatActivity {
 
@@ -34,8 +26,6 @@ public class BassBooster extends AppCompatActivity {
 
         // Let device's volume controls control our audio stream
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-
-        requestAudioPermissions();
 
         // MediaPlayer object (audio file in raw/test.mp3)
         mMediaPlayer = MediaPlayer.create(this, R.raw.croatian);
@@ -156,27 +146,4 @@ public class BassBooster extends AppCompatActivity {
             }
         });*/
     }
-
-
-    private void requestAudioPermissions() {
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.MODIFY_AUDIO_SETTINGS) == PackageManager.PERMISSION_DENIED)
-            Log.d("App", "No MODIFY_AUDIO_SETTINGS" );
-        else
-            Log.d("App", "Yes MODIFY_AUDIO_SETTINGS" );
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED)
-            Log.d("App", "No RECORD_AUDIO" );
-        else
-            Log.d("App", "Yes RECORD_AUDIO" );
-
-        Log.d("App","Requesting permissions" );
-        ActivityCompat.requestPermissions( this, new String[]
-                {
-                        Manifest.permission.MODIFY_AUDIO_SETTINGS,
-                        Manifest.permission.RECORD_AUDIO
-                },1 );
-        Log.d("App","Requested perms");
-    }
-
-
-
 }
