@@ -30,15 +30,13 @@
             android:layout_width="100dp"
             android:layout_height="match_parent"
             app:actionLayout="@layout/seek_bar_item"
-            app:showAsAction="always"
-            android:title="" />
+            app:showAsAction="always" />
         <item
             android:title = "Bass Boost" />
         <item
             android:id="@+id/bass_seek"
             android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:title=""
             app:actionLayout="@layout/seek_bar_item"
             app:showAsAction="always" />
         <item
@@ -47,7 +45,6 @@
             android:id="@+id/loudness_seek"
             android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:title=""
             app:actionLayout="@layout/seek_bar_item"
             app:showAsAction="always" />
     </group>
