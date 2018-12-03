@@ -201,7 +201,8 @@ abstract public class BaseVisualizer extends View {
      *
      * @param audioSessionId of the media to be visualised
      */
-    public void setAudioSessionId(int audioSessionId, final Context musicContext) {
+    public void setAudioSessionId(int audioSessionId, final Context musicContext,
+                                  final int threshold, final double vibrationIntensity) {
         if (mVisualizer != null)
             release();
 
@@ -215,8 +216,8 @@ abstract public class BaseVisualizer extends View {
                 BaseVisualizer.this.mRawAudioBytes = bytes;
                 // Haptic Feedback support
                 double amplitude = (double) (bytes[0] & 0xFF);
-                if (amplitude > 130) {
-                    hapticFeedback(amplitude, musicContext);
+                if (amplitude > threshold) {
+                    hapticFeedback(amplitude, musicContext, vibrationIntensity);
                 }
                 invalidate();
             }
@@ -231,9 +232,12 @@ abstract public class BaseVisualizer extends View {
     }
 
     // Haptic Feedback support
-    private void hapticFeedback(double amplitude, Context musicContext) {
+    private void hapticFeedback(double amplitude, Context musicContext, double vibrationIntensity) {
         vibrator = (Vibrator) musicContext.getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(VibrationEffect.createOneShot(400, (int) amplitude - 20));
+        int intensity = (int) ((amplitude) * vibrationIntensity);
+        if (intensity != 0)
+            vibrator.vibrate(VibrationEffect.createOneShot(400,
+                (int) ((amplitude) * (vibrationIntensity))));
     }
 
     /**

@@ -15,4 +15,5 @@
     <string name="default_song_title">Default Song Title</string>
     <string name="default_artist">by Default Artist</string>
     <string name="default_lyrics"></string>
+    <string name="live_music_title">Listening...</string>
 </resources>

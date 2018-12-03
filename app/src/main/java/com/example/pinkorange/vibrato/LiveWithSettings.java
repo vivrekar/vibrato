@@ -35,6 +35,9 @@ import java.util.ArrayList;
 
 public class LiveWithSettings extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private final int LIVE_THRESHOLD = 160;
+    private final int RECORD_THRESHOLD = 130;
+
     private BarVisualizer mVisualizer;
 
     private MediaPlayer mAudioPlayer;
@@ -42,6 +45,7 @@ public class LiveWithSettings extends AppCompatActivity
     private ArrayList<Integer> allSongId;
     private ArrayList<Song> allSongs;
     private int recordedSongId;
+    private int curAudioSessionId;
 
     private boolean isLive;
     private Thread liveMusicThread;
@@ -50,8 +54,9 @@ public class LiveWithSettings extends AppCompatActivity
     private Toolbar toolbar;
     private DrawerLayout drawer;
     private NavigationView navigationView;
-    private Switch song_notif_switch;
     private boolean lyricsIsChecked;
+    private Switch lyricsSwitch;
+    private MenuItem lyricsItem;
 
     private SeekBar vibrate_seek, loudness, bass;
     private BassBoost mBassBoost;
@@ -60,6 +65,9 @@ public class LiveWithSettings extends AppCompatActivity
     private Button playButton;
     private Button skipButton;
     private Button prevButton;
+
+    private TextView title;
+    private TextView artist;
 
     private void initVariables() {
         Intent intent = getIntent();
@@ -75,18 +83,27 @@ public class LiveWithSettings extends AppCompatActivity
             }
         }
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        song_notif_switch = (Switch) navigationView.getMenu().getItem(2).getActionView();
-        vibrate_seek = (SeekBar) navigationView.getMenu().getItem(4).getActionView();
+        curAudioSessionId = -1;
         lyricsIsChecked = false;
-        bass = (SeekBar) navigationView.getMenu().getItem(6).getActionView();
-        loudness = (SeekBar) navigationView.getMenu().getItem(8).getActionView();
+
+        toolbar = findViewById(R.id.toolbar);
+        drawer = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        lyricsSwitch = (Switch) navigationView.getMenu().getItem(1).getActionView();
+        lyricsItem = navigationView.getMenu().getItem(1);
+        vibrate_seek = (SeekBar) navigationView.getMenu().getItem(3).getActionView();
+
+        bass = (SeekBar) navigationView.getMenu().getItem(5).getActionView();
+        loudness = (SeekBar) navigationView.getMenu().getItem(7).getActionView();
+
         mVisualizer = findViewById(R.id.visualizer);
+
         playButton = findViewById(R.id.play);
         skipButton = findViewById(R.id.skip);
         prevButton = findViewById(R.id.prev);
+
+        title = findViewById(R.id.title);
+        artist = findViewById(R.id.artist);
     }
 
     @Override
@@ -100,7 +117,6 @@ public class LiveWithSettings extends AppCompatActivity
         setActionBarToggle();
         navigationView.setNavigationItemSelectedListener(this);
 
-        setSongSwitchNotifications();
         setVibrationSeekBar();
         setBassSeekBar();
         setLoudnessSeekBar();
@@ -111,48 +127,61 @@ public class LiveWithSettings extends AppCompatActivity
             setSongDetails();
             bassBoost();
             loudnessEnhance();
+        } else {
+            setLiveDetails();
         }
     }
 
+    private void setLiveDetails() {
+        title.setText(R.string.live_music_title);
+        lyricsItem.setVisible(false);
+    }
+
     private void setMusicControlButton() {
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(mAudioPlayer.isPlaying()) {
-                    mAudioPlayer.pause();
-                    playButton.setBackgroundResource(R.drawable.round_play_arrow_24);
-                } else {
-                    mAudioPlayer.start();
+        if (isLive) {
+            playButton.setVisibility(View.GONE);
+            skipButton.setVisibility(View.GONE);
+            prevButton.setVisibility(View.GONE);
+        } else {
+            playButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mAudioPlayer.isPlaying()) {
+                        mAudioPlayer.pause();
+                        playButton.setBackgroundResource(R.drawable.round_play_arrow_24);
+                    } else {
+                        mAudioPlayer.start();
+                        playButton.setBackgroundResource(R.drawable.round_pause_24);
+                    }
+                }
+            });
+
+            skipButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int curSongIndex = allSongId.indexOf(recordedSongId);
+                    int newSongIndex = curSongIndex + 1;
+                    if (curSongIndex >= allSongId.size() - 1) {
+                        newSongIndex = 0;
+                    }
+                    setPrevNextButton(newSongIndex);
                     playButton.setBackgroundResource(R.drawable.round_pause_24);
                 }
-            }
-        });
+            });
 
-        skipButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int curSongIndex = allSongId.indexOf(recordedSongId);
-                int newSongIndex = curSongIndex + 1;
-                if (curSongIndex >= allSongId.size() - 1) {
-                    newSongIndex = 0;
+            prevButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int curSongIndex = allSongId.indexOf(recordedSongId);
+                    int newSongIndex = curSongIndex - 1;
+                    if (curSongIndex <= 0) {
+                        newSongIndex = allSongId.size() - 1;
+                    }
+                    setPrevNextButton(newSongIndex);
+                    playButton.setBackgroundResource(R.drawable.round_pause_24);
                 }
-                setPrevNextButton(newSongIndex);
-                playButton.setBackgroundResource(R.drawable.round_pause_24);
-            }
-        });
-
-        prevButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int curSongIndex = allSongId.indexOf(recordedSongId);
-                int newSongIndex = curSongIndex - 1;
-                if (curSongIndex <= 0) {
-                    newSongIndex = allSongId.size() - 1;
-                }
-                setPrevNextButton(newSongIndex);
-                playButton.setBackgroundResource(R.drawable.round_pause_24);
-            }
-        });
+            });
+        }
     }
 
     private void setPrevNextButton(int newSongIndex) {
@@ -192,8 +221,10 @@ public class LiveWithSettings extends AppCompatActivity
         mAudioPlayer.start();
 
         int audioSessionId = mAudioPlayer.getAudioSessionId();
+        this.curAudioSessionId = audioSessionId;
         if (audioSessionId != -1) {
-            mVisualizer.setAudioSessionId(audioSessionId, this);
+            mVisualizer.setAudioSessionId(audioSessionId, this,
+                    RECORD_THRESHOLD, 0.5);
         }
     }
 
@@ -256,12 +287,12 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void setLoudnessSeekBar() {
+        loudness.setProgress(50);
         loudness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mLoudnessEnhancer.setEnabled(true);
                 mLoudnessEnhancer.setTargetGain(5 * progress);
-                Log.e("----", Float.toString(mLoudnessEnhancer.getTargetGain()));
             }
 
             @Override
@@ -275,12 +306,12 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void setBassSeekBar() {
+        bass.setProgress(50);
         bass.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mBassBoost.setEnabled(true);
                 mBassBoost.setStrength((short) (10 * progress));
-                Log.e("----", Short.toString(mBassBoost.getRoundedStrength()));
             }
 
             @Override
@@ -294,11 +325,10 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void setVibrationSeekBar() {
+        vibrate_seek.setProgress(50);
         vibrate_seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                //TODO add what to do when we change vibration intensity (just take the progress,
-                // which is a value from 0-100 and multiply that into your curr vibration intensity?
             }
 
             @Override
@@ -307,29 +337,18 @@ public class LiveWithSettings extends AppCompatActivity
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-    }
-
-    private void setSongSwitchNotifications() {
-        song_notif_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                        //TODO Implement song notifications
-                }
+                mVisualizer.setAudioSessionId(curAudioSessionId, LiveWithSettings.this,
+                        RECORD_THRESHOLD, vibrate_seek.getProgress() / 100.0);
             }
         });
     }
 
     private void setSongDetails() {
-        TextView title = (TextView) findViewById(R.id.title);
         title.setText(recordedSong.title);
-        TextView artist = (TextView) findViewById(R.id.artist);
         artist.setText(recordedSong.artist);
 
         // Set song lyrics
-        final TextView lyrics = (TextView) findViewById(R.id.lyrics);
-        Switch lyricsSwitch = (Switch) navigationView.getMenu().getItem(1).getActionView();
+        final TextView lyrics = findViewById(R.id.lyrics);
         lyricsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
@@ -353,33 +372,25 @@ public class LiveWithSettings extends AppCompatActivity
     private void bassBoost() {
         // Bass Booster object (priority -- app with highest priority controls
         // the equalizer, session id for audio sess -- attach to media player in same audio sess)
-        int audioSessionId = mAudioPlayer.getAudioSessionId();
-        if (audioSessionId != -1) {
-            Log.e("Get player audio sess", "Audio session ====================== -1");
-            mBassBoost = new BassBoost(0, audioSessionId);
+        if (curAudioSessionId != -1) {
+            mBassBoost = new BassBoost(0, curAudioSessionId);
             BassBoost.Settings bassBoostSettingTemp = mBassBoost.getProperties();
             BassBoost.Settings bassBoostSetting = new BassBoost.Settings(bassBoostSettingTemp.toString());
 
             bassBoostSetting.strength = ((short) 1000 / 19);
             mBassBoost.setProperties(bassBoostSetting);
             mAudioPlayer.setAuxEffectSendLevel(1.0f);
-        } else {
-            Log.e("BassBooster", "audio session id  == -1");
         }
     }
 
     private void loudnessEnhance() {
         // Bass Booster object (priority -- app with highest priority controls
         // the equalizer, session id for audio sess -- attach to media player in same audio sess)
-        int audioSessionId = mAudioPlayer.getAudioSessionId();
-        if (audioSessionId != -1) {
-            Log.e("Get player audio sess", "Audio session ====================== -1");
-            mLoudnessEnhancer = new LoudnessEnhancer(audioSessionId);
+        if (curAudioSessionId != -1) {
+            mLoudnessEnhancer = new LoudnessEnhancer(curAudioSessionId);
             // Gain is in mB (0mB = no amp)
             mLoudnessEnhancer.setTargetGain(0);
             mAudioPlayer.setAuxEffectSendLevel(1.0f);
-        } else {
-            Log.e("Loudness Enhancer", "audio session id  == -1");
         }
     }
 
@@ -400,7 +411,7 @@ public class LiveWithSettings extends AppCompatActivity
             this.channelConfig = AudioFormat.CHANNEL_IN_MONO;
             this.channelConfigOut = AudioFormat.CHANNEL_OUT_MONO;
             this.audioFormat = AudioFormat.ENCODING_PCM_16BIT;
-            this.bufferSize = 2048;
+            this.bufferSize = 64;
             this.recordData = new byte[bufferSize];
         }
         
@@ -426,14 +437,17 @@ public class LiveWithSettings extends AppCompatActivity
         private void initVisualizer() {
             int audioSessionId = audioPlayer.getAudioSessionId();
             if (audioSessionId != -1) {
-                mVisualizer.setAudioSessionId(audioSessionId, this.musicContext);
+                mVisualizer.setAudioSessionId(audioSessionId, this.musicContext,
+                        LIVE_THRESHOLD, 0.5);
+                curAudioSessionId = audioSessionId;
             }
         }
 
         private void initAudioStreams() {
-            this.recorder = new AudioRecord(audioSource, samplingRate, channelConfig, audioFormat, bufferSize);
+            this.recorder = new AudioRecord(this.audioSource, this.samplingRate, this.channelConfig, this.audioFormat, this.bufferSize);
             if (this.recorder.getState() == AudioRecord.STATE_INITIALIZED) {
                 this.recorder.startRecording();
+                this.isRecording = true;
             }
 
             this.audioPlayer = new AudioTrack.Builder()
@@ -449,10 +463,11 @@ public class LiveWithSettings extends AppCompatActivity
                 .setBufferSizeInBytes(this.bufferSize)
                 .build();
 
-            this.audioPlayer.setVolume(0);
             if(this.audioPlayer.getPlayState() != AudioTrack.PLAYSTATE_PLAYING) {
                 this.audioPlayer.play();
                 initVisualizer();
+                bassBoost();
+                loudnessEnhance();
             }
         }
 
@@ -465,6 +480,26 @@ public class LiveWithSettings extends AppCompatActivity
                     writtenBytes += audioPlayer.write(recordData, 0, readBytes);
                 }
             } while (isRecording);
+        }
+
+        private void bassBoost() {
+            if (curAudioSessionId!= -1) {
+                mBassBoost = new BassBoost(0, curAudioSessionId);
+                BassBoost.Settings bassBoostSettingTemp = mBassBoost.getProperties();
+                BassBoost.Settings bassBoostSetting = new BassBoost.Settings(bassBoostSettingTemp.toString());
+
+                bassBoostSetting.strength = ((short) 1000 / 19);
+                mBassBoost.setProperties(bassBoostSetting);
+                audioPlayer.setAuxEffectSendLevel(1.0f);
+            }
+        }
+
+        private void loudnessEnhance() {
+            if (curAudioSessionId != -1) {
+                mLoudnessEnhancer = new LoudnessEnhancer(curAudioSessionId);
+                mLoudnessEnhancer.setTargetGain(0);
+                audioPlayer.setAuxEffectSendLevel(1.0f);
+            }
         }
     }
 
