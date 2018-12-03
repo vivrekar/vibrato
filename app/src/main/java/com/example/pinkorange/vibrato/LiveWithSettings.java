@@ -54,8 +54,9 @@ public class LiveWithSettings extends AppCompatActivity
     private Toolbar toolbar;
     private DrawerLayout drawer;
     private NavigationView navigationView;
-    private Switch song_notif_switch;
     private boolean lyricsIsChecked;
+    private Switch lyricsSwitch;
+    private MenuItem lyricsItem;
 
     private SeekBar vibrate_seek, loudness, bass;
     private BassBoost mBassBoost;
@@ -83,17 +84,24 @@ public class LiveWithSettings extends AppCompatActivity
         }
 
         curAudioSessionId = -1;
+        lyricsIsChecked = false;
+
         toolbar = findViewById(R.id.toolbar);
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
+        lyricsSwitch = (Switch) navigationView.getMenu().getItem(1).getActionView();
+        lyricsItem = navigationView.getMenu().getItem(1);
         vibrate_seek = (SeekBar) navigationView.getMenu().getItem(3).getActionView();
-        lyricsIsChecked = false;
+
         bass = (SeekBar) navigationView.getMenu().getItem(5).getActionView();
         loudness = (SeekBar) navigationView.getMenu().getItem(7).getActionView();
+
         mVisualizer = findViewById(R.id.visualizer);
+
         playButton = findViewById(R.id.play);
         skipButton = findViewById(R.id.skip);
         prevButton = findViewById(R.id.prev);
+
         title = findViewById(R.id.title);
         artist = findViewById(R.id.artist);
     }
@@ -125,7 +133,8 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void setLiveDetails() {
-        title.setText("Listening...");
+        title.setText(R.string.live_music_title);
+        lyricsItem.setVisible(false);
     }
 
     private void setMusicControlButton() {
@@ -340,7 +349,6 @@ public class LiveWithSettings extends AppCompatActivity
 
         // Set song lyrics
         final TextView lyrics = findViewById(R.id.lyrics);
-        Switch lyricsSwitch = (Switch) navigationView.getMenu().getItem(1).getActionView();
         lyricsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
