@@ -59,7 +59,6 @@ public class LiveWithSettings extends AppCompatActivity
     private Button playButton;
     private Button skipButton;
     private Button prevButton;
-    private SeekBar musicSeekBar;
 
     private void initVariables() {
         Intent intent = getIntent();
