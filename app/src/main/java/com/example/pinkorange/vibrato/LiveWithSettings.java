@@ -59,6 +59,7 @@ public class LiveWithSettings extends AppCompatActivity
     private Button playButton;
     private Button skipButton;
     private Button prevButton;
+    private SeekBar musicSeekBar;
 
     private void initVariables() {
         Intent intent = getIntent();
@@ -85,6 +86,7 @@ public class LiveWithSettings extends AppCompatActivity
         playButton = findViewById(R.id.play);
         skipButton = findViewById(R.id.skip);
         prevButton = findViewById(R.id.prev);
+
     }
 
     @Override
@@ -99,11 +101,11 @@ public class LiveWithSettings extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         setSongSwitchNotifications();
-        setMusicControlButton();
         setVibrationSeekBar();
         setBassSeekBar();
         setLoudnessSeekBar();
         initializeVisualizerAndFeedback();
+        setMusicControlButton();
 
         if (!isLive) {
             setSongDetails();
@@ -238,6 +240,7 @@ public class LiveWithSettings extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        playButton.setBackgroundResource(R.drawable.round_play_arrow_24);
         if (mAudioPlayer != null)
             mAudioPlayer.release();
         if (mVisualizer != null)
