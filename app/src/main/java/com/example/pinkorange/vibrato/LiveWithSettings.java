@@ -51,6 +51,7 @@ public class LiveWithSettings extends AppCompatActivity
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private Switch song_notif_switch;
+    private boolean lyricsIsChecked;
 
     private SeekBar vibrate_seek, loudness, bass;
     private BassBoost mBassBoost;
@@ -79,6 +80,7 @@ public class LiveWithSettings extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         song_notif_switch = (Switch) navigationView.getMenu().getItem(2).getActionView();
         vibrate_seek = (SeekBar) navigationView.getMenu().getItem(4).getActionView();
+        lyricsIsChecked = false;
         bass = (SeekBar) navigationView.getMenu().getItem(6).getActionView();
         loudness = (SeekBar) navigationView.getMenu().getItem(8).getActionView();
         mVisualizer = findViewById(R.id.visualizer);
@@ -163,6 +165,12 @@ public class LiveWithSettings extends AppCompatActivity
         }
         initializeVisualizerAndFeedback();
         setSongDetails();
+
+        final TextView lyrics = (TextView) findViewById(R.id.lyrics);
+
+        if (lyricsIsChecked) {
+            lyrics.setText(recordedSong.lyrics + "\n\n\n\n\n\n\n\n\n\n");
+        }
     }
 
     private void initializeVisualizerAndFeedback() {
@@ -191,6 +199,7 @@ public class LiveWithSettings extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+        lyricsIsChecked = false;
         if (!isLive) {
             mAudioPlayer.stop();
         } else {
@@ -325,8 +334,10 @@ public class LiveWithSettings extends AppCompatActivity
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     lyrics.setText(recordedSong.lyrics + "\n\n\n\n\n\n\n\n\n\n");
+                    lyricsIsChecked = true;
                 } else {
                     lyrics.setText("");
+                    lyricsIsChecked = false;
                 }
             }
         });
