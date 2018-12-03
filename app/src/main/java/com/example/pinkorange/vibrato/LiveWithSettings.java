@@ -86,11 +86,10 @@ public class LiveWithSettings extends AppCompatActivity
         toolbar = findViewById(R.id.toolbar);
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
-        song_notif_switch = (Switch) navigationView.getMenu().getItem(2).getActionView();
-        vibrate_seek = (SeekBar) navigationView.getMenu().getItem(4).getActionView();
+        vibrate_seek = (SeekBar) navigationView.getMenu().getItem(3).getActionView();
         lyricsIsChecked = false;
-        bass = (SeekBar) navigationView.getMenu().getItem(6).getActionView();
-        loudness = (SeekBar) navigationView.getMenu().getItem(8).getActionView();
+        bass = (SeekBar) navigationView.getMenu().getItem(5).getActionView();
+        loudness = (SeekBar) navigationView.getMenu().getItem(7).getActionView();
         mVisualizer = findViewById(R.id.visualizer);
         playButton = findViewById(R.id.play);
         skipButton = findViewById(R.id.skip);
@@ -110,7 +109,6 @@ public class LiveWithSettings extends AppCompatActivity
         setActionBarToggle();
         navigationView.setNavigationItemSelectedListener(this);
 
-        setSongSwitchNotifications();
         setVibrationSeekBar();
         setBassSeekBar();
         setLoudnessSeekBar();
@@ -332,16 +330,6 @@ public class LiveWithSettings extends AppCompatActivity
             public void onStopTrackingTouch(SeekBar seekBar) {
                 mVisualizer.setAudioSessionId(curAudioSessionId, LiveWithSettings.this,
                         RECORD_THRESHOLD, vibrate_seek.getProgress() / 100.0);
-            }
-        });
-    }
-
-    private void setSongSwitchNotifications() {
-        song_notif_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                        //TODO Implement song notifications
-                }
             }
         });
     }
