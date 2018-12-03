@@ -215,7 +215,7 @@ abstract public class BaseVisualizer extends View {
                 BaseVisualizer.this.mRawAudioBytes = bytes;
                 // Haptic Feedback support
                 double amplitude = (double) (bytes[0] & 0xFF);
-                if (amplitude > 149) {
+                if (amplitude > 130) {
                     hapticFeedback(amplitude, musicContext);
                 }
                 invalidate();
@@ -233,7 +233,7 @@ abstract public class BaseVisualizer extends View {
     // Haptic Feedback support
     private void hapticFeedback(double amplitude, Context musicContext) {
         vibrator = (Vibrator) musicContext.getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(VibrationEffect.createOneShot(1000, (int) amplitude));
+        vibrator.vibrate(VibrationEffect.createOneShot(400, (int) amplitude - 20));
     }
 
     /**

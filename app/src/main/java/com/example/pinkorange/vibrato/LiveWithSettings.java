@@ -85,7 +85,6 @@ public class LiveWithSettings extends AppCompatActivity
         playButton = findViewById(R.id.play);
         skipButton = findViewById(R.id.skip);
         prevButton = findViewById(R.id.prev);
-
     }
 
     @Override
@@ -136,6 +135,7 @@ public class LiveWithSettings extends AppCompatActivity
                     newSongIndex = 0;
                 }
                 setPrevNextButton(newSongIndex);
+                playButton.setBackgroundResource(R.drawable.round_pause_24);
             }
         });
 
@@ -148,10 +148,9 @@ public class LiveWithSettings extends AppCompatActivity
                     newSongIndex = allSongId.size() - 1;
                 }
                 setPrevNextButton(newSongIndex);
+                playButton.setBackgroundResource(R.drawable.round_pause_24);
             }
         });
-
-
     }
 
     private void setPrevNextButton(int newSongIndex) {
@@ -239,7 +238,6 @@ public class LiveWithSettings extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        playButton.setBackgroundResource(R.drawable.round_play_arrow_24);
         if (mAudioPlayer != null)
             mAudioPlayer.release();
         if (mVisualizer != null)
