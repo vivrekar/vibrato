@@ -27,7 +27,7 @@
             android:title = "Vibration Intensity" />
         <item
             android:id="@+id/vibration_seek"
-            android:layout_width="match_parent"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             app:actionLayout="@layout/seek_bar_item"
             app:showAsAction="always"
@@ -36,7 +36,7 @@
             android:title = "Bass Boost" />
         <item
             android:id="@+id/bass_seek"
-            android:layout_width="match_parent"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:title=""
             app:actionLayout="@layout/seek_bar_item"
@@ -45,7 +45,7 @@
             android:title = "Volume Boost" />
         <item
             android:id="@+id/loudness_seek"
-            android:layout_width="match_parent"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:title=""
             app:actionLayout="@layout/seek_bar_item"
