@@ -322,8 +322,6 @@ public class LiveWithSettings extends AppCompatActivity
         vibrate_seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mVisualizer.setAudioSessionId(curAudioSessionId, LiveWithSettings.this,
-                        RECORD_THRESHOLD, progress / 100.0);
             }
 
             @Override
@@ -332,6 +330,8 @@ public class LiveWithSettings extends AppCompatActivity
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                mVisualizer.setAudioSessionId(curAudioSessionId, LiveWithSettings.this,
+                        RECORD_THRESHOLD, vibrate_seek.getProgress() / 100.0);
             }
         });
     }
