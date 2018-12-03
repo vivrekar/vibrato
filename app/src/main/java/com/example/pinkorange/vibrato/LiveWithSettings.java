@@ -94,6 +94,7 @@ public class LiveWithSettings extends AppCompatActivity
         });
 
         vibrate_seek = (SeekBar) navigationView.getMenu().getItem(4).getActionView();
+        vibrate_seek.setPadding(120, 0, 0, 0);
 
         vibrate_seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -112,6 +113,7 @@ public class LiveWithSettings extends AppCompatActivity
         });
 
         bass = (SeekBar) navigationView.getMenu().getItem(6).getActionView();
+        bass.setPadding(120, 0, 0, 0);
 
         bass.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -131,6 +133,7 @@ public class LiveWithSettings extends AppCompatActivity
         });
 
         loudness = (SeekBar) navigationView.getMenu().getItem(8).getActionView();
+        loudness.setPadding(120, 0, 0, 0);
 
         loudness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
