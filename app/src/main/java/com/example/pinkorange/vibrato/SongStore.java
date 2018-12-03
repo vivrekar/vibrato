@@ -69,4 +69,12 @@ class SongStore {
         return this.songs;
     }
 
+    ArrayList<Integer> getSongsId() {
+        ArrayList<Integer> songId = new ArrayList<>();
+        for (Song song : this.songs) {
+            songId.add(song.id);
+        }
+        return songId;
+    }
+
 }

@@ -24,10 +24,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class LiveWithSettings extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -35,6 +39,8 @@ public class LiveWithSettings extends AppCompatActivity
 
     private MediaPlayer mAudioPlayer;
     private Song recordedSong;
+    private ArrayList<Integer> allSongId;
+    private ArrayList<Song> allSongs;
     private int recordedSongId;
 
     private boolean isLive;
@@ -50,12 +56,18 @@ public class LiveWithSettings extends AppCompatActivity
     private BassBoost mBassBoost;
     private LoudnessEnhancer mLoudnessEnhancer;
 
+    private Button playButton;
+    private Button skipButton;
+    private Button prevButton;
+
     private void initVariables() {
         Intent intent = getIntent();
         isLive = intent.getBooleanExtra("live", false);
 
         if (!isLive) {
             recordedSong = (Song) intent.getSerializableExtra("song");
+            allSongs = (ArrayList<Song>) intent.getSerializableExtra("allSongs");
+            allSongId = (ArrayList<Integer>) intent.getSerializableExtra("songId");
             recordedSongId = recordedSong.id;
             if (recordedSongId == -1) {
                 Log.e("App", "Failed to pass the current song through activities");
@@ -70,6 +82,10 @@ public class LiveWithSettings extends AppCompatActivity
         bass = (SeekBar) navigationView.getMenu().getItem(6).getActionView();
         loudness = (SeekBar) navigationView.getMenu().getItem(8).getActionView();
         mVisualizer = findViewById(R.id.visualizer);
+        playButton = findViewById(R.id.play);
+        skipButton = findViewById(R.id.skip);
+        prevButton = findViewById(R.id.prev);
+
     }
 
     @Override
@@ -88,12 +104,66 @@ public class LiveWithSettings extends AppCompatActivity
         setBassSeekBar();
         setLoudnessSeekBar();
         initializeVisualizerAndFeedback();
+        setMusicControlButton();
 
         if (!isLive) {
             setSongDetails();
             bassBoost();
             loudnessEnhance();
         }
+    }
+
+    private void setMusicControlButton() {
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mAudioPlayer.isPlaying()) {
+                    mAudioPlayer.pause();
+                    playButton.setBackgroundResource(R.drawable.round_play_arrow_24);
+                } else {
+                    mAudioPlayer.start();
+                    playButton.setBackgroundResource(R.drawable.round_pause_24);
+                }
+            }
+        });
+
+        skipButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int curSongIndex = allSongId.indexOf(recordedSongId);
+                int newSongIndex = curSongIndex + 1;
+                if (curSongIndex >= allSongId.size() - 1) {
+                    newSongIndex = 0;
+                }
+                setPrevNextButton(newSongIndex);
+            }
+        });
+
+        prevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int curSongIndex = allSongId.indexOf(recordedSongId);
+                int newSongIndex = curSongIndex - 1;
+                if (curSongIndex <= 0) {
+                    newSongIndex = allSongId.size() - 1;
+                }
+                setPrevNextButton(newSongIndex);
+            }
+        });
+
+
+    }
+
+    private void setPrevNextButton(int newSongIndex) {
+        recordedSongId = allSongId.get(newSongIndex);
+        recordedSong = allSongs.get(newSongIndex);
+        if (!isLive) {
+            mAudioPlayer.stop();
+        } else {
+            liveMusicAnalysis.stop();
+        }
+        initializeVisualizerAndFeedback();
+        setSongDetails();
     }
 
     private void initializeVisualizerAndFeedback() {
@@ -169,6 +239,7 @@ public class LiveWithSettings extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        playButton.setBackgroundResource(R.drawable.round_play_arrow_24);
         if (mAudioPlayer != null)
             mAudioPlayer.release();
         if (mVisualizer != null)
