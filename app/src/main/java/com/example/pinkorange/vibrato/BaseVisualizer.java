@@ -234,7 +234,9 @@ abstract public class BaseVisualizer extends View {
     // Haptic Feedback support
     private void hapticFeedback(double amplitude, Context musicContext, double vibrationIntensity) {
         vibrator = (Vibrator) musicContext.getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(VibrationEffect.createOneShot(400,
+        int intensity = (int) ((amplitude) * vibrationIntensity);
+        if (intensity != 0)
+            vibrator.vibrate(VibrationEffect.createOneShot(400,
                 (int) ((amplitude) * (vibrationIntensity))));
     }
 
