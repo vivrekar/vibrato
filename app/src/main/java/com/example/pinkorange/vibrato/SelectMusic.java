@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class SelectMusic extends AppCompatActivity {
     private SongStore ss = new SongStore();
     private ArrayList<Song> songs = ss.getSongs();
+    private ArrayList<Integer> songId = ss.getSongsId();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +38,8 @@ public class SelectMusic extends AppCompatActivity {
                 // TODO: so that the next screen can use song to set title, artist, lyrics
                 intent.putExtra("song", cur_song);
                 intent.putExtra("live", false);
+                intent.putExtra("songId", songId);
+                intent.putExtra("allSongs", songs);
                 startActivity(intent);
             }
         });
