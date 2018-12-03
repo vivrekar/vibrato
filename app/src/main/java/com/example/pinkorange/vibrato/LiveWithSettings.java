@@ -118,8 +118,10 @@ public class LiveWithSettings extends AppCompatActivity
             public void onClick(View view) {
                 if(mAudioPlayer.isPlaying()) {
                     mAudioPlayer.pause();
+                    playButton.setBackgroundResource(R.drawable.round_play_arrow_24);
                 } else {
                     mAudioPlayer.start();
+                    playButton.setBackgroundResource(R.drawable.round_pause_24);
                 }
             }
         });
