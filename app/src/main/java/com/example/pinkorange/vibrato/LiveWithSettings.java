@@ -10,6 +10,7 @@ import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.media.audiofx.AcousticEchoCanceler;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.LoudnessEnhancer;
 import android.os.Bundle;
@@ -51,6 +52,7 @@ public class LiveWithSettings extends AppCompatActivity
     private boolean isLive;
     private Thread liveMusicThread;
     private LiveMusicAnalysis liveMusicAnalysis;
+    private AcousticEchoCanceler acousticEchoCanceler;
 
     private Toolbar toolbar;
     private DrawerLayout drawer;
@@ -452,7 +454,7 @@ public class LiveWithSettings extends AppCompatActivity
             this.musicContext = musicContext;
             this.isRecording = false;
             this.audioSource = MediaRecorder.AudioSource.MIC;
-            this.samplingRate = 44100;
+            this.samplingRate = 16000;
             this.channelConfig = AudioFormat.CHANNEL_IN_MONO;
             this.channelConfigOut = AudioFormat.CHANNEL_OUT_MONO;
             this.audioFormat = AudioFormat.ENCODING_PCM_16BIT;
@@ -488,6 +490,13 @@ public class LiveWithSettings extends AppCompatActivity
             }
         }
 
+        private void echoCancellation() {
+            if (AcousticEchoCanceler.isAvailable()) {
+                acousticEchoCanceler = AcousticEchoCanceler.create(curAudioSessionId);
+                acousticEchoCanceler.setEnabled(true);
+            }
+        }
+
         private void initAudioStreams() {
             this.recorder = new AudioRecord(this.audioSource, this.samplingRate, this.channelConfig, this.audioFormat, this.bufferSize);
             if (this.recorder.getState() == AudioRecord.STATE_INITIALIZED) {
@@ -513,6 +522,7 @@ public class LiveWithSettings extends AppCompatActivity
                 initVisualizer();
                 bassBoost();
                 loudnessEnhance();
+                echoCancellation();
             }
         }
 
