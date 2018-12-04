@@ -72,8 +72,11 @@ public class LiveWithSettings extends AppCompatActivity
 
     private Thread seekBarThread;
     private SeekBar mSeekBar;
-    private double songDuration;
     private MusicSeekBar musicSeekBar;
+
+    private double songDuration;
+    private String convertedSongDuration;
+    private TextView songCurTime, songEndTime;
 
     private void initVariables() {
         Intent intent = getIntent();
@@ -91,6 +94,7 @@ public class LiveWithSettings extends AppCompatActivity
 
         curAudioSessionId = -1;
         lyricsIsChecked = false;
+        convertedSongDuration = "";
 
         toolbar = findViewById(R.id.toolbar);
         drawer = findViewById(R.id.drawer_layout);
@@ -113,6 +117,9 @@ public class LiveWithSettings extends AppCompatActivity
 
         mSeekBar = findViewById(R.id.music_prograss_bar);
         musicSeekBar = new MusicSeekBar();
+
+        songCurTime = findViewById(R.id.song_start_time);
+        songEndTime = findViewById(R.id.song_end_time);
     }
 
     @Override
@@ -149,6 +156,8 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void initializeSongSeekBar() {
+        songEndTime.setText(convertedSongDuration);
+
         seekBarThread = new Thread(musicSeekBar);
         seekBarThread.start();
 
@@ -249,7 +258,9 @@ public class LiveWithSettings extends AppCompatActivity
 
     private void recordedVisualizerAndFeedback() {
         mAudioPlayer = MediaPlayer.create(this, recordedSongId);
+
         songDuration = mAudioPlayer.getDuration() / 1000.0;
+        convertedSongDuration = convertSongDuration(songDuration);
 
         mAudioPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -266,6 +277,29 @@ public class LiveWithSettings extends AppCompatActivity
             mVisualizer.setAudioSessionId(audioSessionId, this,
                     RECORD_THRESHOLD, 0.5);
         }
+    }
+
+    private String convertSongDuration(double timeToConvert) {
+        String convertedString = "";
+
+        int minutes = (int) (timeToConvert / 60);
+        if (minutes < 10) {
+            convertedString += "0" + minutes;
+        } else {
+            convertedString += minutes;
+        }
+
+        convertedString += ":";
+
+        int seconds = (int) (timeToConvert % 60);
+
+        if (seconds < 10) {
+            convertedString += "0" + seconds;
+        } else {
+            convertedString += seconds;
+        }
+
+        return convertedString;
     }
 
     @Override
@@ -561,7 +595,9 @@ public class LiveWithSettings extends AppCompatActivity
                 try {
                     if(mAudioPlayer != null){
                         double mCurrentPosition = mAudioPlayer.getCurrentPosition() / 1000.0;
-                        mSeekBar.setProgress((int)(mCurrentPosition / songDuration * 100) );
+                        String convertedTime = convertSongDuration(mCurrentPosition);
+                        songCurTime.setText(convertedTime);
+                        mSeekBar.setProgress((int)(mCurrentPosition / songDuration * 100));
                     }
                     Thread.sleep(1000);
                 } catch (Exception e) {}
