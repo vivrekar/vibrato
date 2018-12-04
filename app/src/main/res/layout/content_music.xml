@@ -34,12 +34,13 @@
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <com.example.pinkorange.vibrato.FixedTopFadeEdgeScrollView
+        android:id="@+id/fixedTopFadeEdgeScrollView"
         android:layout_width="match_parent"
         android:layout_height="350dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
         android:fadingEdgeLength="300dp"
         android:requiresFadingEdge="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -47,7 +48,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/visualizer"
-        app:layout_constraintVertical_bias="0.517">
+        app:layout_constraintVertical_bias="0.662">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -58,71 +59,86 @@
                 android:id="@+id/lyrics"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/default_lyrics"
                 android:textSize="18sp" />
         </LinearLayout>
     </com.example.pinkorange.vibrato.FixedTopFadeEdgeScrollView>
 
     <com.example.pinkorange.vibrato.BarVisualizer
-            android:id="@+id/visualizer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:avColor="@color/pink"
-            app:avDensity="0.8"
-            app:avSpeed="normal"
-            app:avType="fill"/>
+        android:id="@+id/visualizer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:avColor="@color/pink"
+        app:avDensity="0.8"
+        app:avSpeed="normal"
+        app:avType="fill"
+        tools:layout_editor_absoluteX="42dp"
+        tools:layout_editor_absoluteY="0dp" />
 
     <Button
         android:id="@+id/play"
         android:layout_width="28dp"
         android:layout_height="28dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:background="@drawable/round_pause_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/visualizer"
-        app:layout_constraintVertical_bias="0.16" />
+        app:layout_constraintVertical_bias="0.205" />
 
     <Button
         android:id="@+id/skip"
         android:layout_width="28dp"
         android:layout_height="28dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:background="@drawable/round_skip_next_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.38"
+        app:layout_constraintHorizontal_bias="0.373"
         app:layout_constraintStart_toEndOf="@+id/play"
         app:layout_constraintTop_toTopOf="@+id/visualizer"
-        app:layout_constraintVertical_bias="0.16" />
+        app:layout_constraintVertical_bias="0.205" />
 
     <Button
         android:id="@+id/prev"
         android:layout_width="28dp"
         android:layout_height="28dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:background="@drawable/round_skip_previous_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/play"
-        app:layout_constraintHorizontal_bias="0.671"
+        app:layout_constraintHorizontal_bias="0.664"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.16" />
+        app:layout_constraintVertical_bias="0.205" />
+
+    <SeekBar
+        android:id="@+id/music_prograss_bar"
+        android:layout_width="300dp"
+        android:layout_height="18dp"
+        android:layout_marginBottom="152dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/visualizer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintVertical_bias="0.088" />
 
 </android.support.constraint.ConstraintLayout>

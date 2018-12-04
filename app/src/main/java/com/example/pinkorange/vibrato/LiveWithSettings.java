@@ -13,6 +13,7 @@ import android.media.MediaRecorder;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.LoudnessEnhancer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -69,6 +70,11 @@ public class LiveWithSettings extends AppCompatActivity
     private TextView title;
     private TextView artist;
 
+    private Thread seekBarThread;
+    private SeekBar mSeekBar;
+    private double songDuration;
+    private MusicSeekBar musicSeekBar;
+
     private void initVariables() {
         Intent intent = getIntent();
         isLive = intent.getBooleanExtra("live", false);
@@ -104,6 +110,9 @@ public class LiveWithSettings extends AppCompatActivity
 
         title = findViewById(R.id.title);
         artist = findViewById(R.id.artist);
+
+        mSeekBar = findViewById(R.id.music_prograss_bar);
+        musicSeekBar = new MusicSeekBar();
     }
 
     @Override
@@ -121,6 +130,7 @@ public class LiveWithSettings extends AppCompatActivity
         setBassSeekBar();
         setLoudnessSeekBar();
         initializeVisualizerAndFeedback();
+        initializeSongSeekBar();
         setMusicControlButton();
 
         if (!isLive) {
@@ -135,6 +145,27 @@ public class LiveWithSettings extends AppCompatActivity
     private void setLiveDetails() {
         title.setText(R.string.live_music_title);
         lyricsItem.setVisible(false);
+        mSeekBar.setVisibility(View.GONE);
+    }
+
+    private void initializeSongSeekBar() {
+        seekBarThread = new Thread(musicSeekBar);
+        seekBarThread.start();
+
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(mAudioPlayer != null && fromUser){
+                    mAudioPlayer.seekTo((int) ((progress / 100.0) * songDuration * 1000));
+                }
+            }
+        });
     }
 
     private void setMusicControlButton() {
@@ -218,6 +249,15 @@ public class LiveWithSettings extends AppCompatActivity
 
     private void recordedVisualizerAndFeedback() {
         mAudioPlayer = MediaPlayer.create(this, recordedSongId);
+        songDuration = mAudioPlayer.getDuration() / 1000.0;
+
+        mAudioPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                playButton.setBackgroundResource(R.drawable.round_play_arrow_24);
+            }
+        });
+
         mAudioPlayer.start();
 
         int audioSessionId = mAudioPlayer.getAudioSessionId();
@@ -233,6 +273,7 @@ public class LiveWithSettings extends AppCompatActivity
         lyricsIsChecked = false;
         if (!isLive) {
             mAudioPlayer.stop();
+            musicSeekBar.stop();
         } else {
             liveMusicAnalysis.stop();
         }
@@ -503,6 +544,31 @@ public class LiveWithSettings extends AppCompatActivity
         }
     }
 
+    private class MusicSeekBar implements Runnable {
+        private boolean isRunning;
+
+        public MusicSeekBar() {
+            this.isRunning = true;
+        }
+
+        @Override
+        public void run() {
+            while (this.isRunning) {
+                try {
+                    if(mAudioPlayer != null){
+                        double mCurrentPosition = mAudioPlayer.getCurrentPosition() / 1000.0;
+                        mSeekBar.setProgress((int)(mCurrentPosition / songDuration * 100) );
+                    }
+                    Thread.sleep(1000);
+                } catch (Exception e) {}
+            }
+        }
+
+        public void stop() {
+           this.isRunning = false;
+        }
+    }
+
      private void requestPermissions() {
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.MODIFY_AUDIO_SETTINGS) == PackageManager.PERMISSION_DENIED)
             Log.d("App", "No MODIFY_AUDIO_SETTINGS" );
@@ -521,4 +587,6 @@ public class LiveWithSettings extends AppCompatActivity
                 },1 );
         Log.d("App","Requested perms");
     }
+
+
 }
