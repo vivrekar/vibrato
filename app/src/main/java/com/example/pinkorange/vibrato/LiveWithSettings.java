@@ -328,7 +328,9 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void setLoudnessSeekBar() {
-        loudness.setPadding(120, 0, 0, 0);
+        // TODO: Put these into the XML file somehow?
+        loudness.setProgress(50);
+        loudness.setPadding(210, 0, 60, 0);
         loudness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -347,7 +349,8 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void setBassSeekBar() {
-        bass.setPadding(120, 0, 0, 0);
+        bass.setProgress(50);
+        bass.setPadding(210, 0, 60, 0);
         bass.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -366,7 +369,8 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void setVibrationSeekBar() {
-        vibrate_seek.setPadding(120, 0, 0, 0);
+        vibrate_seek.setProgress(50);
+        vibrate_seek.setPadding(210, 0, 60, 0);
         vibrate_seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
