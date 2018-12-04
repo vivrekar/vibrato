@@ -445,7 +445,7 @@ public class LiveWithSettings extends AppCompatActivity
         private Context musicContext;
 
         private int audioSource, samplingRate, channelConfig, channelConfigOut, audioFormat, bufferSize;
-        private byte[] recordData = new byte[bufferSize];
+        private byte[] recordData;
         private boolean isRecording;
 
         public LiveMusicAnalysis(Context musicContext) {
