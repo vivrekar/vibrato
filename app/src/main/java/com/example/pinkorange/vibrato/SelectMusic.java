@@ -1,6 +1,8 @@
 package com.example.pinkorange.vibrato;
 
 import android.content.Intent;
+import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -17,11 +19,14 @@ public class SelectMusic extends AppCompatActivity {
     private SongStore ss = new SongStore();
     private ArrayList<Song> songs = ss.getSongs();
     private ArrayList<Integer> songId = ss.getSongsId();
+    private MediaMetadataRetriever mmr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_music);
+
+        mmr = new MediaMetadataRetriever();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -71,8 +76,26 @@ public class SelectMusic extends AppCompatActivity {
             Song curSong = songs.get(i);
             TextView title = view.findViewById(R.id.song_title);
             title.setText(curSong.title);
+
             TextView artist = view.findViewById(R.id.song_artist);
             artist.setText(curSong.artist);
+
+            TextView songDuration = view.findViewById(R.id.music_time);
+            Uri mediaPath = Uri.parse("android.resource://" + getPackageName() + "/" + curSong.id);
+            mmr.setDataSource(SelectMusic.this, mediaPath);
+            String song_duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            int intSongDuration = Integer.parseInt(song_duration) / 1000;
+            String minSec = (intSongDuration / 60) + ":";
+            int seconds = intSongDuration % 60;
+
+            if (seconds < 10) {
+                minSec += "0" + seconds;
+            } else {
+                minSec += seconds;
+            }
+
+            songDuration.setText(minSec);
+
             return view;
         }
     }
