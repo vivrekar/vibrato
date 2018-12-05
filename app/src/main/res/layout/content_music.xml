@@ -44,7 +44,7 @@
         android:text="00:00"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.024"
+        app:layout_constraintHorizontal_bias="0.102"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.157" />
@@ -59,7 +59,7 @@
         android:text="03:20"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.944"
+        app:layout_constraintHorizontal_bias="0.856"
         app:layout_constraintStart_toEndOf="@+id/song_start_time"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.157" />
@@ -124,7 +124,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/visualizer"
-        app:layout_constraintVertical_bias="0.229" />
+        app:layout_constraintVertical_bias="0.207" />
 
     <Button
         android:id="@+id/skip"
@@ -140,7 +140,7 @@
         app:layout_constraintHorizontal_bias="0.327"
         app:layout_constraintStart_toEndOf="@+id/play"
         app:layout_constraintTop_toTopOf="@+id/visualizer"
-        app:layout_constraintVertical_bias="0.229" />
+        app:layout_constraintVertical_bias="0.207" />
 
     <Button
         android:id="@+id/prev"
@@ -156,11 +156,11 @@
         app:layout_constraintHorizontal_bias="0.619"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.229" />
+        app:layout_constraintVertical_bias="0.207" />
 
     <SeekBar
         android:id="@+id/music_prograss_bar"
-        android:layout_width="320dp"
+        android:layout_width="362dp"
         android:layout_height="18dp"
         android:layout_marginBottom="152dp"
         android:layout_marginEnd="8dp"
