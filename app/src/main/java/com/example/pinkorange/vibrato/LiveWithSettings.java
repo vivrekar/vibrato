@@ -10,6 +10,7 @@ import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.media.audiofx.AcousticEchoCanceler;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.LoudnessEnhancer;
 import android.os.Bundle;
@@ -36,8 +37,10 @@ import java.util.ArrayList;
 
 public class LiveWithSettings extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private final int LIVE_THRESHOLD = 160;
+    private final int LIVE_THRESHOLD = 130;
     private final int RECORD_THRESHOLD = 130;
+
+    private boolean permissionsGranted;
 
     private BarVisualizer mVisualizer;
 
@@ -89,6 +92,8 @@ public class LiveWithSettings extends AppCompatActivity
             }
         }
 
+        permissionsGranted = false;
+
         curAudioSessionId = -1;
         lyricsIsChecked = false;
 
@@ -119,9 +124,26 @@ public class LiveWithSettings extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView(R.layout.activity_music);
-        requestPermissions();
         initVariables();
+        disableElements();
+        requestPermissions();
+    }
 
+    private void disableElements() {
+        playButton.setVisibility(View.GONE);
+        skipButton.setVisibility(View.GONE);
+        prevButton.setVisibility(View.GONE);
+        mSeekBar.setVisibility(View.GONE);
+    }
+
+    private void reenableElements() {
+        playButton.setVisibility(View.VISIBLE);
+        skipButton.setVisibility(View.VISIBLE);
+        prevButton.setVisibility(View.VISIBLE);
+        mSeekBar.setVisibility(View.VISIBLE);
+    }
+
+    private void continueInitialization() {
         setSupportActionBar(toolbar);
         setActionBarToggle();
         navigationView.setNavigationItemSelectedListener(this);
@@ -134,6 +156,7 @@ public class LiveWithSettings extends AppCompatActivity
         setMusicControlButton();
 
         if (!isLive) {
+            reenableElements();
             setSongDetails();
             bassBoost();
             loudnessEnhance();
@@ -444,15 +467,14 @@ public class LiveWithSettings extends AppCompatActivity
         private AudioTrack audioPlayer;
         private Context musicContext;
 
-        private int audioSource, samplingRate, channelConfig, channelConfigOut, audioFormat, bufferSize;
-        private byte[] recordData = new byte[bufferSize];
+        private int audioSource, channelConfig, samplingRate, channelConfigOut, audioFormat, bufferSize;
+        private byte[] recordData;
         private boolean isRecording;
 
         public LiveMusicAnalysis(Context musicContext) {
             this.musicContext = musicContext;
             this.isRecording = false;
-            this.audioSource = MediaRecorder.AudioSource.MIC;
-            this.samplingRate = 44100;
+            this.audioSource = MediaRecorder.AudioSource.VOICE_COMMUNICATION;
             this.channelConfig = AudioFormat.CHANNEL_IN_MONO;
             this.channelConfigOut = AudioFormat.CHANNEL_OUT_MONO;
             this.audioFormat = AudioFormat.ENCODING_PCM_16BIT;
@@ -592,5 +614,9 @@ public class LiveWithSettings extends AppCompatActivity
         Log.d("App","Requested perms");
     }
 
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        continueInitialization();
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 }
