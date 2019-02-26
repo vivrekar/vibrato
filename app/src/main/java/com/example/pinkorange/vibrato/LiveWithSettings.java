@@ -79,7 +79,7 @@ public class LiveWithSettings extends AppCompatActivity
 
     private double songDuration;
     private String convertedSongDuration;
-    private TextView songCurTime, songEndTime;
+    private TextView songCurTime, songEndTime, recLyrics;
 
     private void initVariables() {
         Intent intent = getIntent();
@@ -106,6 +106,8 @@ public class LiveWithSettings extends AppCompatActivity
         navigationView = findViewById(R.id.nav_view);
         lyricsSwitch = (Switch) navigationView.getMenu().getItem(1).getActionView();
         lyricsItem = navigationView.getMenu().getItem(1);
+        recLyrics = findViewById(R.id.rec_lyrics);
+
 
         vibrate_seek = (SeekBar) navigationView.getMenu().getItem(3).getActionView();
         bass = (SeekBar) navigationView.getMenu().getItem(5).getActionView();
@@ -141,6 +143,7 @@ public class LiveWithSettings extends AppCompatActivity
         skipButton.setVisibility(View.GONE);
         prevButton.setVisibility(View.GONE);
         mSeekBar.setVisibility(View.GONE);
+        songCurTime.setVisibility(View.GONE);
     }
 
     private void reenableElements() {
@@ -148,6 +151,8 @@ public class LiveWithSettings extends AppCompatActivity
         skipButton.setVisibility(View.VISIBLE);
         prevButton.setVisibility(View.VISIBLE);
         mSeekBar.setVisibility(View.VISIBLE);
+        songCurTime.setVisibility(View.VISIBLE);
+        recLyrics.setVisibility(View.GONE);
     }
 
     private void continueInitialization() {
@@ -174,6 +179,8 @@ public class LiveWithSettings extends AppCompatActivity
 
     private void setLiveDetails() {
         title.setText(R.string.live_music_title);
+        recLyrics.setVisibility(View.VISIBLE);
+        recLyrics.setText("Loading...");
         lyricsItem.setVisible(false);
         mSeekBar.setVisibility(View.GONE);
     }
@@ -277,6 +284,18 @@ public class LiveWithSettings extends AppCompatActivity
         liveMusicAnalysis = new LiveMusicAnalysis(this);
         liveMusicThread = new Thread(liveMusicAnalysis);
         liveMusicThread.start();
+        /* New added */
+        final Context context = this;
+        findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                LyricsRec lyrics = new LyricsRec(context, recLyrics);
+                lyrics.start();
+            }
+        });
+
+        /* end of new added*/
     }
 
     private void recordedVisualizerAndFeedback() {
