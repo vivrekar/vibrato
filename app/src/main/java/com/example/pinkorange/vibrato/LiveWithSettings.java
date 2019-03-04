@@ -1,6 +1,7 @@
 package com.example.pinkorange.vibrato;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -26,9 +27,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -368,9 +371,11 @@ public class LiveWithSettings extends AppCompatActivity
         if (id == R.id.display_lyrics_switch) {
             // Handle the display lyrics action
         }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+        if (id == R.id.menu_title) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
+        //drawer.closeDrawer(GravityCompat.START);
+        return false;
     }
 
     @Override
@@ -384,10 +389,37 @@ public class LiveWithSettings extends AppCompatActivity
             liveMusicAnalysis.release();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    private void enableLeftSilde(SeekBar b){
+        b.setOnTouchListener(new ListView.OnTouchListener()
+        {
+            @Override
+            public boolean onTouch(View v, MotionEvent event)
+            {
+                int action = event.getAction();
+                switch (action)
+                {
+                    case MotionEvent.ACTION_DOWN:
+                        // Disallow Drawer to intercept touch events.
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        // Allow Drawer to intercept touch events.
+                        v.getParent().requestDisallowInterceptTouchEvent(false);
+                        break;
+                }
+
+                // Handle seekbar touch events.
+                v.onTouchEvent(event);
+                return true;
+            }
+        });
+    }
     private void setLoudnessSeekBar() {
         // TODO: Put these into the XML file somehow?
         loudness.setProgress(50);
-        loudness.setPadding(210, 0, 60, 0);
+        enableLeftSilde(loudness);
         loudness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -407,7 +439,7 @@ public class LiveWithSettings extends AppCompatActivity
 
     private void setBassSeekBar() {
         bass.setProgress(50);
-        bass.setPadding(210, 0, 60, 0);
+        enableLeftSilde(bass);
         bass.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -427,7 +459,7 @@ public class LiveWithSettings extends AppCompatActivity
 
     private void setVibrationSeekBar() {
         vibrate_seek.setProgress(50);
-        vibrate_seek.setPadding(210, 0, 60, 0);
+        enableLeftSilde(vibrate_seek);
         vibrate_seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
