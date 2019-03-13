@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -163,11 +165,10 @@ public class SelectMusic extends AppCompatActivity {
         public View getView(int i, View view, ViewGroup viewGroup) {
             view = getLayoutInflater().inflate(R.layout.song_item_view, null);
             // TODO: Set background shape of song card
-            //LinearLayout songCard = findViewById(R.id.song_card);
-            //songCard.setBackground(getResources().getDrawable(R.drawable.rounded_rectangle));
-            // Add text details to song card
+
             Audio curSong = audioList.get(i);
             TextView title = view.findViewById(R.id.song_title);
+            ImageView album = view.findViewById(R.id.album_cover);
             title.setText(curSong.getTitle());
 
             TextView artist = view.findViewById(R.id.song_artist);
@@ -180,6 +181,17 @@ public class SelectMusic extends AppCompatActivity {
             TextView songDuration = view.findViewById(R.id.music_time);
             Uri mediaPath = Uri.parse(curSong.getData());
             mmr.setDataSource(SelectMusic.this, mediaPath);
+
+            //set the album image
+            byte[] art = mmr.getEmbeddedPicture();
+
+            if( art != null ){
+                album.setImageBitmap( BitmapFactory.decodeByteArray(art, 0, art.length));
+            }
+            else{
+                album.setImageResource(R.drawable.no_image);
+            }
+
             String song_duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
             int intSongDuration = Integer.parseInt(song_duration) / 1000;
             String minSec = (intSongDuration / 60) + ":";

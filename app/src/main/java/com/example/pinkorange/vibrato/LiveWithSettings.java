@@ -141,6 +141,8 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void disableElements() {
+        songCurTime.setVisibility(View.GONE);
+        songEndTime.setVisibility(View.GONE);
         playButton.setVisibility(View.GONE);
         skipButton.setVisibility(View.GONE);
         prevButton.setVisibility(View.GONE);
@@ -148,6 +150,8 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void reenableElements() {
+        songCurTime.setVisibility(View.VISIBLE);
+        songEndTime.setVisibility(View.VISIBLE);
         playButton.setVisibility(View.VISIBLE);
         skipButton.setVisibility(View.VISIBLE);
         prevButton.setVisibility(View.VISIBLE);
