@@ -24,10 +24,10 @@
     <TextView
         android:id="@+id/song_title"
         android:layout_width="wrap_content"
-        android:layout_height="36dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
-        android:paddingBottom="4dp"
         android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         android:text="@string/default_song_title"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,11 +35,11 @@
 
     <TextView
         android:id="@+id/song_artist"
-        android:layout_width="wrap_content"
+        android:layout_width="121dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
-        android:paddingBottom="4dp"
         android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         android:text="@string/default_artist"
         android:textSize="16sp"
         android:textStyle="italic"
