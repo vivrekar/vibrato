@@ -55,6 +55,10 @@ public class SelectMusic extends AppCompatActivity {
         activity = this;
 
         requestPermission(activity);
+
+    }
+
+    private void continueInitialize(){
         loadAudio();
         if(audioList == null){
             Toast toast = Toast.makeText(getApplicationContext(),
@@ -90,6 +94,7 @@ public class SelectMusic extends AppCompatActivity {
             }
         });
     }
+
     private void requestPermission(Activity activity){
         if (ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -99,18 +104,12 @@ public class SelectMusic extends AppCompatActivity {
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
                     Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
             } else {
                 // No explanation needed; request the permission
                 ActivityCompat.requestPermissions(activity,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        0);
+                        1);
 
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
             }
         } else {
             // Permission has already been granted
@@ -120,7 +119,18 @@ public class SelectMusic extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
-         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean failed = false;
+        for(Integer i : grantResults){
+            if (i !=  PackageManager.PERMISSION_GRANTED){
+                failed = true;
+            }
+        }
+        if (failed){
+            thread.start();
+        } else {
+            continueInitialize();
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
     private void loadAudio() {
         ContentResolver contentResolver = getContentResolver();
@@ -207,5 +217,7 @@ public class SelectMusic extends AppCompatActivity {
 
             return view;
         }
+
+
     }
 }

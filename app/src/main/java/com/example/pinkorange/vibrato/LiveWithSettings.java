@@ -44,8 +44,6 @@ public class LiveWithSettings extends AppCompatActivity
     private final int LIVE_THRESHOLD = 130;
     private final int RECORD_THRESHOLD = 130;
 
-    private boolean permissionsGranted;
-
     private BarVisualizer mVisualizer;
 
     private MediaPlayer mAudioPlayer;
@@ -98,8 +96,6 @@ public class LiveWithSettings extends AppCompatActivity
                 Log.e("App", "Failed to pass the current song through activities");
             }
         }
-
-        permissionsGranted = false;
 
         curAudioSessionId = -1;
         lyricsIsChecked = false;
