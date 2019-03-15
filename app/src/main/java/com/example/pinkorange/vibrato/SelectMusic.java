@@ -53,9 +53,11 @@ public class SelectMusic extends AppCompatActivity {
         songId = new ArrayList<>();
         mmr = new MediaMetadataRetriever();
         activity = this;
-
-        requestPermission(activity);
-
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            requestPermission(activity);
+        } else{
+            continueInitialize();
+        }
     }
 
     private void continueInitialize(){
