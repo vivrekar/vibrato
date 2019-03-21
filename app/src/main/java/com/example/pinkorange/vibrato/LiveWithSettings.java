@@ -265,7 +265,7 @@ public class LiveWithSettings extends AppCompatActivity
         final TextView lyrics = (TextView) findViewById(R.id.lyrics);
 
         if (lyricsIsChecked) {
-            lyrics.setText("no lyrcis found" + "\n\n\n\n\n\n\n\n\n\n");
+            lyrics.setText("No Lyrics Found" + "\n\n\n\n\n\n\n\n\n\n");
         }
     }
 
@@ -487,7 +487,7 @@ public class LiveWithSettings extends AppCompatActivity
         lyricsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    lyrics.setText("no lyrics found" + "\n\n\n\n\n\n\n\n\n\n");
+                    lyrics.setText("No Lyrics Found" + "\n\n\n\n\n\n\n\n\n\n");
                     lyricsIsChecked = true;
                 } else {
                     lyrics.setText("");

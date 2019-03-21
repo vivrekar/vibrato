@@ -3,15 +3,20 @@ package com.example.pinkorange.vibrato;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,13 +34,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class SelectMusic extends AppCompatActivity {
-    private SongStore ss = new SongStore();
     private ArrayList<Uri> songId;
     private MediaMetadataRetriever mmr;
     Thread thread;
     ArrayList<Audio> audioList;
     Activity activity;
-
+    SharedPreferences prefs;
+    AlertDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,11 +55,16 @@ public class SelectMusic extends AppCompatActivity {
                 }
             }
         };
-
+        prefs = getSharedPreferences("com.example.pinkorange.vibrato", MODE_PRIVATE);
+        Log.e("check!!!!!!!: ", prefs.getBoolean("firstrun", true)? "First Run!" : "Not First");
         songId = new ArrayList<>();
         mmr = new MediaMetadataRetriever();
         activity = this;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+
+        if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) && !prefs.getBoolean("firstrun", true)){
+            showDialogTipUserGoToAppSetting();
+        } else if(prefs.getBoolean("firstrun", true)){
             requestPermission(activity);
         } else{
             continueInitialize();
@@ -97,6 +108,30 @@ public class SelectMusic extends AppCompatActivity {
         });
     }
 
+    //load audio from local storage
+    private void loadAudio() {
+        ContentResolver contentResolver = getContentResolver();
+
+        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
+        String sortOrder = MediaStore.Audio.Media.TITLE + " ASC";
+        Cursor cursor = contentResolver.query(uri, null, selection, null, sortOrder);
+
+        if (cursor != null && cursor.getCount() > 0) {
+            audioList = new ArrayList<>();
+            while (cursor.moveToNext()) {
+                String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+                String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+                String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+
+                // Save to audioList
+                audioList.add(new Audio(data, title, album, artist));
+            }
+        }
+        cursor.close();
+    }
+
     private void requestPermission(Activity activity){
         if (ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -128,33 +163,54 @@ public class SelectMusic extends AppCompatActivity {
             }
         }
         if (failed){
-            thread.start();
+            showDialogTipUserGoToAppSetting();
         } else {
             continueInitialize();
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
-    private void loadAudio() {
-        ContentResolver contentResolver = getContentResolver();
 
-        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
-        String sortOrder = MediaStore.Audio.Media.TITLE + " ASC";
-        Cursor cursor = contentResolver.query(uri, null, selection, null, sortOrder);
+    //show the user tip to enable the permission
+    private void showDialogTipUserGoToAppSetting(){
+         dialog = new AlertDialog.Builder(this)
+                .setTitle("Unable To Access External Storage !")
+                .setMessage("Please Enable It In Setting !")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package",getPackageName(),null);
+                        intent.setData(uri);
 
-        if (cursor != null && cursor.getCount() > 0) {
-            audioList = new ArrayList<>();
-            while (cursor.moveToNext()) {
-                String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-                String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-                String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                        startActivityForResult(intent,123);
+                        finish();
+                    }
 
-                // Save to audioList
-                audioList.add(new Audio(data, title, album, artist));
-            }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                }).setCancelable(false).show();
+
+        dialog.show();
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        positiveButton.setTextColor(Color.BLACK);
+
+        Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        negativeButton.setTextColor(Color.BLACK);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (prefs.getBoolean("firstrun", true)) {
+
+            prefs.edit().putBoolean("firstrun", false).commit();
         }
-        cursor.close();
     }
 
     private class MyAdapter extends BaseAdapter{
