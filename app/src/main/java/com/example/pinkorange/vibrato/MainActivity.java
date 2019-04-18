@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     protected Intent recordedIntent, liveIntent;
@@ -32,5 +33,16 @@ public class MainActivity extends AppCompatActivity {
                  startActivity(liveIntent);
              }
          });
+
+        //for test
+
+       setView();
+    }
+
+    public void setView(){
+        TextView view = findViewById(R.id.test_track);
+        FetchLyrics a = new FetchLyrics("Sugar", "maroon5", this);
+        a.findTrackId();
+        view.setText(a.trackId + "");
     }
 }

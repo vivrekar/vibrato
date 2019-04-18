@@ -28,5 +28,6 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.gauravk.audiovisualizer:audiovisualizer:0.9.1'
     implementation 'com.makeramen:roundedimageview:2.3.0'
+    implementation 'com.android.volley:volley:1.1.1'
     testImplementation 'junit:junit:4.12'
 }
