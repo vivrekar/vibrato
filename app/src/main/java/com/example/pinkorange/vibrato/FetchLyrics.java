@@ -97,11 +97,11 @@ public class FetchLyrics {
                             JSONObject lyrics = body.getJSONObject("lyrics");
                             songLyrics = lyrics.getString("lyrics_body");
                             lyricsView.setText(songLyrics.substring(0, songLyrics.indexOf("...")));
-                            Log.d("Inside of find lyrisc!!!!", "I am here");
+                            Log.d("Inside of find lyrics!!!!", "I am here");
                         } catch(JSONException e){
                             setDeaultValue();
                             lyricsView.setText(songLyrics);
-                            Log.d("JSON error", "wtf!");
+                            Log.d("JSON error", "There is a error!");
                             e.printStackTrace();
                         }
 
