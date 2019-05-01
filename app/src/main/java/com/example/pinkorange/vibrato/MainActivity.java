@@ -34,15 +34,7 @@ public class MainActivity extends AppCompatActivity {
              }
          });
 
-        //for test
 
-       setView();
-    }
 
-    public void setView(){
-        TextView view = findViewById(R.id.test_track);
-        FetchLyrics a = new FetchLyrics("Sugar", "maroon5", this);
-        a.findTrackId();
-        view.setText(a.trackId + "");
     }
 }

@@ -33,6 +33,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -74,6 +75,8 @@ public class LiveWithSettings extends AppCompatActivity
 
     private TextView title;
     private TextView artist;
+
+    private ScrollView lyricsScoll;
 
     private Thread seekBarThread;
     private SeekBar mSeekBar;
@@ -125,6 +128,8 @@ public class LiveWithSettings extends AppCompatActivity
 
         songCurTime = findViewById(R.id.song_start_time);
         songEndTime = findViewById(R.id.song_end_time);
+
+        lyricsScoll = findViewById(R.id.fixedTopFadeEdgeScrollView);
     }
 
     @Override
@@ -179,6 +184,7 @@ public class LiveWithSettings extends AppCompatActivity
     private void setLiveDetails() {
         title.setText(R.string.live_music_title);
         lyricsItem.setVisible(false);
+        scorllVisablilty(false);
         mSeekBar.setVisibility(View.GONE);
     }
 
@@ -254,6 +260,7 @@ public class LiveWithSettings extends AppCompatActivity
     private void setPrevNextButton(int newSongIndex) {
         recordedSongId = allSongId.get(newSongIndex);
         recordedSong = allSongs.get(newSongIndex);
+        Context musicContext = this;
         if (!isLive) {
             mAudioPlayer.stop();
         } else {
@@ -265,7 +272,9 @@ public class LiveWithSettings extends AppCompatActivity
         final TextView lyrics = (TextView) findViewById(R.id.lyrics);
 
         if (lyricsIsChecked) {
-            lyrics.setText("No Lyrics Found" + "\n\n\n\n\n\n\n\n\n\n");
+            scorllVisablilty(true);
+            FetchLyrics lyricsHelper = new FetchLyrics(recordedSong.title, recordedSong.artist, musicContext);
+            lyricsHelper.findTrackIdandLyrics(lyrics);
         }
     }
 
@@ -481,20 +490,34 @@ public class LiveWithSettings extends AppCompatActivity
     private void setSongDetails() {
         title.setText(recordedSong.title);
         artist.setText(recordedSong.artist);
-
+        final Context musicContext = this;
+        scorllVisablilty(false);
         // Set song lyrics
         final TextView lyrics = findViewById(R.id.lyrics);
         lyricsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    lyrics.setText("No Lyrics Found" + "\n\n\n\n\n\n\n\n\n\n");
+                    scorllVisablilty(true);
+                    lyrics.setText("Loading...");
+                    FetchLyrics lyricsHelper = new FetchLyrics(recordedSong.title, recordedSong.artist, musicContext);
+                    lyricsHelper.findTrackIdandLyrics(lyrics);
                     lyricsIsChecked = true;
                 } else {
                     lyrics.setText("");
+                    scorllVisablilty(false);
                     lyricsIsChecked = false;
                 }
             }
         });
+    }
+
+    private void scorllVisablilty(Boolean how){
+        lyricsScoll.setEnabled(how);
+        lyricsScoll.setVerticalScrollBarEnabled(how);
+        lyricsScoll.setHorizontalScrollBarEnabled(how);
+        lyricsScoll.setVerticalFadingEdgeEnabled(how);
+        lyricsScoll.setHorizontalFadingEdgeEnabled(how);
+
     }
 
     private void setActionBarToggle() {

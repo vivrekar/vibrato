@@ -1,6 +1,7 @@
 package com.example.pinkorange.vibrato;
 import android.content.Context;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -18,6 +19,7 @@ public class FetchLyrics {
     private String title, artist;
     public int trackId = 123;
     private Context context;
+    public  String songLyrics;
     Boolean trackFound;
 
     FetchLyrics(String SongTitle, String SongArtist, Context context){
@@ -35,7 +37,7 @@ public class FetchLyrics {
         this.title = title;
     }
 
-    public void findTrackId(){
+    public void findTrackIdandLyrics(final TextView lyricsView){
         String url = "https://api.musixmatch.com/ws/1.1/";
         url = url + "track.search?q_track=" + this.title;
         url = url + (this.artist.equals("Unknown Artist")? "" : "&q_artist=" + this.artist);
@@ -54,27 +56,70 @@ public class FetchLyrics {
                             JSONObject object = track_list.getJSONObject(0);
                             JSONObject track = object.getJSONObject("track");
                             trackId = track.getInt("track_id");
-                            trackFound = true;
+                            findLyrics(trackId, lyricsView);
                             Log.d("Inside!!!!", "I am here");
-                        } catch(JSONException e){
+                        } catch(JSONException e) {
+                            setDeaultValue();
+                            lyricsView.setText(songLyrics);
                             Log.d("JSON error", "wtf!");
                             e.printStackTrace();
                         }
 
                         Log.d("Track Id!!!!!", trackId+ "");
-
+                        Log.e("Here is the content", lyricsView.getText().toString());
                     }
                 }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // TODO: Handle error
-                        trackId = 0;
+                        setDeaultValue();
 
                     }
                 });
         queue.add(jor);
 
     }
+    private void findLyrics(int tid, final TextView lyricsView){
+        String url = "https://api.musixmatch.com/ws/1.1/track.lyrics.get?track_id=";
+        url += tid;
+        url = url + "&apikey=" + API_KEY;
+        RequestQueue queue = Volley.newRequestQueue(this.context);
+        Log.d("URL!!!!!", url +"");
+        JsonObjectRequest jor = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try{
+                            JSONObject message = response.getJSONObject("message");
+                            JSONObject body = message.getJSONObject("body");
+                            JSONObject lyrics = body.getJSONObject("lyrics");
+                            songLyrics = lyrics.getString("lyrics_body");
+                            lyricsView.setText(songLyrics.substring(0, songLyrics.indexOf("...")));
+                            Log.d("Inside of find lyrisc!!!!", "I am here");
+                        } catch(JSONException e){
+                            setDeaultValue();
+                            lyricsView.setText(songLyrics);
+                            Log.d("JSON error", "wtf!");
+                            e.printStackTrace();
+                        }
+
+                        Log.d("lyrics!!!!!", songLyrics+ "");
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        setDeaultValue();
+                    }
+                });
+        queue.add(jor);
+    }
+
+    private void setDeaultValue(){
+        trackId = 0;
+        songLyrics = "Lyrics Not Found";
+    }
 }
