@@ -14,6 +14,7 @@ import android.media.MediaRecorder;
 import android.media.audiofx.AcousticEchoCanceler;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.LoudnessEnhancer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
@@ -43,15 +44,13 @@ public class LiveWithSettings extends AppCompatActivity
     private final int LIVE_THRESHOLD = 130;
     private final int RECORD_THRESHOLD = 130;
 
-    private boolean permissionsGranted;
-
     private BarVisualizer mVisualizer;
 
     private MediaPlayer mAudioPlayer;
-    private Song recordedSong;
-    private ArrayList<Integer> allSongId;
-    private ArrayList<Song> allSongs;
-    private int recordedSongId;
+    private Audio recordedSong;
+    private ArrayList<Uri> allSongId;
+    private ArrayList<Audio> allSongs;
+    private Uri recordedSongId;
     private int curAudioSessionId;
 
     private boolean isLive;
@@ -89,16 +88,14 @@ public class LiveWithSettings extends AppCompatActivity
         isLive = intent.getBooleanExtra("live", false);
 
         if (!isLive) {
-            recordedSong = (Song) intent.getSerializableExtra("song");
-            allSongs = (ArrayList<Song>) intent.getSerializableExtra("allSongs");
-            allSongId = (ArrayList<Integer>) intent.getSerializableExtra("songId");
-            recordedSongId = recordedSong.id;
-            if (recordedSongId == -1) {
+            recordedSong = (Audio) intent.getSerializableExtra("song");
+            allSongs = (ArrayList<Audio>) intent.getSerializableExtra("allSongs");
+            allSongId = (ArrayList<Uri>) intent.getSerializableExtra("songId");
+            recordedSongId = Uri.parse(recordedSong.data);
+            if (recordedSongId == null) {
                 Log.e("App", "Failed to pass the current song through activities");
             }
         }
-
-        permissionsGranted = false;
 
         curAudioSessionId = -1;
         lyricsIsChecked = false;
@@ -140,6 +137,8 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void disableElements() {
+        songCurTime.setVisibility(View.GONE);
+        songEndTime.setVisibility(View.GONE);
         playButton.setVisibility(View.GONE);
         skipButton.setVisibility(View.GONE);
         prevButton.setVisibility(View.GONE);
@@ -147,6 +146,8 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void reenableElements() {
+        songCurTime.setVisibility(View.VISIBLE);
+        songEndTime.setVisibility(View.VISIBLE);
         playButton.setVisibility(View.VISIBLE);
         skipButton.setVisibility(View.VISIBLE);
         prevButton.setVisibility(View.VISIBLE);
@@ -264,7 +265,7 @@ public class LiveWithSettings extends AppCompatActivity
         final TextView lyrics = (TextView) findViewById(R.id.lyrics);
 
         if (lyricsIsChecked) {
-            lyrics.setText(recordedSong.lyrics + "\n\n\n\n\n\n\n\n\n\n");
+            lyrics.setText("No Lyrics Found" + "\n\n\n\n\n\n\n\n\n\n");
         }
     }
 
@@ -486,7 +487,7 @@ public class LiveWithSettings extends AppCompatActivity
         lyricsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    lyrics.setText(recordedSong.lyrics + "\n\n\n\n\n\n\n\n\n\n");
+                    lyrics.setText("No Lyrics Found" + "\n\n\n\n\n\n\n\n\n\n");
                     lyricsIsChecked = true;
                 } else {
                     lyrics.setText("");

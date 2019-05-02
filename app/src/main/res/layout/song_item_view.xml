@@ -9,13 +9,26 @@
     android:paddingBottom="8dp"
     android:paddingTop="8dp">
 
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/album_cover"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:riv_corner_radius="10dip"
+        app:layout_constraintEnd_toStartOf="@+id/song_title"
+        app:layout_constraintHorizontal_bias="0.32"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_menu_gallery" />
+
     <TextView
         android:id="@+id/song_title"
         android:layout_width="wrap_content"
-        android:layout_height="36dp"
-        android:layout_marginStart="16dp"
-        android:paddingBottom="4dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="100dp"
         android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         android:text="@string/default_song_title"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,11 +36,12 @@
 
     <TextView
         android:id="@+id/song_artist"
-        android:layout_width="wrap_content"
+        android:layout_width="186dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:paddingBottom="4dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="4dp"
         android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         android:text="@string/default_artist"
         android:textSize="16sp"
         android:textStyle="italic"
