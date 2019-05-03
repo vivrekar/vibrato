@@ -56,7 +56,6 @@ public class SelectMusic extends AppCompatActivity {
             }
         };
         prefs = getSharedPreferences("com.example.pinkorange.vibrato", MODE_PRIVATE);
-        Log.e("check!!!!!!!: ", prefs.getBoolean("firstrun", true)? "First Run!" : "Not First");
         songId = new ArrayList<>();
         mmr = new MediaMetadataRetriever();
         activity = this;
@@ -174,7 +173,7 @@ public class SelectMusic extends AppCompatActivity {
     private void showDialogTipUserGoToAppSetting(){
          dialog = new AlertDialog.Builder(this)
                 .setTitle("Unable To Access External Storage !")
-                .setMessage("Please Enable It In Setting !")
+                .setMessage("Please Enable It In Setting...")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

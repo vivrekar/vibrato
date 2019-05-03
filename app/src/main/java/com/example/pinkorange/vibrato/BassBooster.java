@@ -45,9 +45,7 @@ public class BassBooster extends AppCompatActivity {
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                Log.e("-----------------------", "6");
                 mp.release();
-                Log.e("-----------------------", "7");
                 //when music stream ends playing
             }
         });
@@ -60,7 +58,6 @@ public class BassBooster extends AppCompatActivity {
         // the equalizer, session id for audio sess -- attach to media player in same audio sess)
         int audioSessionId = mMediaPlayer.getAudioSessionId();
         if (audioSessionId != -1) {
-            Log.e("Get player audio sess", "Audio session ====================== -1");
             mBassBoost = new BassBoost(0, audioSessionId);
 
             BassBoost.Settings bassBoostSettingTemp = mBassBoost.getProperties();
@@ -73,7 +70,6 @@ public class BassBooster extends AppCompatActivity {
             mMediaPlayer.setAuxEffectSendLevel(1.0f);
 
         } else {
-            Log.e("BassBooster", "audio session id  == -1");
         }
 
         // Create the bars
@@ -88,7 +84,6 @@ public class BassBooster extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mBassBoost.setEnabled(true);
                 mBassBoost.setStrength((short) (10 * progress));
-                Log.e("----", Short.toString(mBassBoost.getRoundedStrength()));
             }
 
             @Override
@@ -109,41 +104,12 @@ public class BassBooster extends AppCompatActivity {
         // the equalizer, session id for audio sess -- attach to media player in same audio sess)
         int audioSessionId = mMediaPlayer.getAudioSessionId();
         if (audioSessionId != -1) {
-            Log.e("Get player audio sess", "Audio session ====================== -1");
             mLoudnessEnhancer = new LoudnessEnhancer(audioSessionId);
 
             // Gain is in mB (0mB = no amp)
             mLoudnessEnhancer.setTargetGain(0);
 
             mMediaPlayer.setAuxEffectSendLevel(1.0f);
-        } else {
-            Log.e("Loudness Enhancer", "audio session id  == -1");
         }
-
-        // Create the bars
-
-        // Seek Bar
-        /*SeekBar seekBar = findViewById(R.id.loudness);
-
-
-        // Change progress when slider position is changed
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mLoudnessEnhancer.setEnabled(true);
-                mLoudnessEnhancer.setTargetGain(5 * progress);
-                Log.e("----", Float.toString(mLoudnessEnhancer.getTargetGain()));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });*/
     }
 }

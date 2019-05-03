@@ -1,6 +1,5 @@
 package com.example.pinkorange.vibrato;
 import android.content.Context;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -43,7 +42,6 @@ public class FetchLyrics {
         url = url + (this.artist.equals("Unknown Artist")? "" : "&q_artist=" + this.artist);
         url = url + "&apikey=" + API_KEY;
         RequestQueue queue = Volley.newRequestQueue(this.context);
-        Log.d("URL!!!!!", url +"");
         JsonObjectRequest jor = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
@@ -57,16 +55,11 @@ public class FetchLyrics {
                             JSONObject track = object.getJSONObject("track");
                             trackId = track.getInt("track_id");
                             findLyrics(trackId, lyricsView);
-                            Log.d("Inside!!!!", "I am here");
                         } catch(JSONException e) {
                             setDeaultValue();
                             lyricsView.setText(songLyrics);
-                            Log.d("JSON error", "wtf!");
                             e.printStackTrace();
                         }
-
-                        Log.d("Track Id!!!!!", trackId+ "");
-                        Log.e("Here is the content", lyricsView.getText().toString());
                     }
                 }, new Response.ErrorListener() {
 
@@ -74,7 +67,7 @@ public class FetchLyrics {
                     public void onErrorResponse(VolleyError error) {
                         // TODO: Handle error
                         setDeaultValue();
-
+                        lyricsView.setText(songLyrics);
                     }
                 });
         queue.add(jor);
@@ -85,7 +78,6 @@ public class FetchLyrics {
         url += tid;
         url = url + "&apikey=" + API_KEY;
         RequestQueue queue = Volley.newRequestQueue(this.context);
-        Log.d("URL!!!!!", url +"");
         JsonObjectRequest jor = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
@@ -97,22 +89,18 @@ public class FetchLyrics {
                             JSONObject lyrics = body.getJSONObject("lyrics");
                             songLyrics = lyrics.getString("lyrics_body");
                             lyricsView.setText(songLyrics.substring(0, songLyrics.indexOf("...")));
-                            Log.d("Inside of find lyrics!!!!", "I am here");
                         } catch(JSONException e){
                             setDeaultValue();
                             lyricsView.setText(songLyrics);
-                            Log.d("JSON error", "There is a error!");
                             e.printStackTrace();
                         }
-
-                        Log.d("lyrics!!!!!", songLyrics+ "");
-
                     }
                 }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         setDeaultValue();
+                        lyricsView.setText(songLyrics);
                     }
                 });
         queue.add(jor);

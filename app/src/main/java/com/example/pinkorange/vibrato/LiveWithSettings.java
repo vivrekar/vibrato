@@ -3,22 +3,24 @@ package com.example.pinkorange.vibrato;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
-import android.media.audiofx.AcousticEchoCanceler;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.LoudnessEnhancer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -688,27 +690,64 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
      private void requestPermissions() {
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.MODIFY_AUDIO_SETTINGS) == PackageManager.PERMISSION_DENIED)
-            Log.d("App", "No MODIFY_AUDIO_SETTINGS" );
-        else
-            Log.d("App", "Yes MODIFY_AUDIO_SETTINGS" );
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED)
-            Log.d("App", "No RECORD_AUDIO" );
-        else
-            Log.d("App", "Yes RECORD_AUDIO" );
-
-        Log.d("App","Requesting permissions" );
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.MODIFY_AUDIO_SETTINGS) == PackageManager.PERMISSION_DENIED){
+        }
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED){
+        }
         ActivityCompat.requestPermissions( this, new String[]
                 {
                         Manifest.permission.MODIFY_AUDIO_SETTINGS,
                         Manifest.permission.RECORD_AUDIO
                 },1 );
-        Log.d("App","Requested perms");
+    }
+
+    //show the user tip to enable the permission
+    private void showDialogTipUserGoToAppSetting(){
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Unable Record Audio  !")
+                .setMessage("Please Enable It In Setting...")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package",getPackageName(),null);
+                        intent.setData(uri);
+
+                        startActivityForResult(intent,123);
+                        finish();
+                    }
+
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                }).setCancelable(false).show();
+
+        dialog.show();
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        positiveButton.setTextColor(Color.BLACK);
+
+        Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        negativeButton.setTextColor(Color.BLACK);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        continueInitialization();
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean failed = false;
+        for(Integer i : grantResults){
+            if (i !=  PackageManager.PERMISSION_GRANTED){
+                failed = true;
+            }
+        }
+        if (failed){
+            showDialogTipUserGoToAppSetting();
+        } else {
+            continueInitialization();
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 }

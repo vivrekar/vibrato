@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
         liveIntent = new Intent(MainActivity.this, LiveWithSettings.class);
         live_music_button.setOnClickListener(new View.OnClickListener() {
              public void onClick(View v) {
-                 Log.e("App", "ASIOHXIOH");
                  liveIntent.putExtra("live", true);
                  startActivity(liveIntent);
              }
