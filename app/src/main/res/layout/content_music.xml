@@ -10,7 +10,7 @@
 
     <TextView
         android:id="@+id/title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="38dp"
         android:layout_marginTop="16dp"
@@ -23,7 +23,7 @@
 
     <TextView
         android:id="@+id/artist"
-        android:layout_width="241dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="38dp"
         android:layout_marginTop="8dp"
@@ -65,7 +65,7 @@
         app:layout_constraintTop_toBottomOf="@+id/music_prograss_bar"
         app:layout_constraintVertical_bias="0.002" />
 
-    <ScrollView
+    <com.example.pinkorange.vibrato.FixedTopFadeEdgeScrollView
         android:id="@+id/fixedTopFadeEdgeScrollView"
         android:layout_width="348dp"
         android:layout_height="350dp"
@@ -90,7 +90,7 @@
             <TextView
                 android:id="@+id/lyrics"
                 android:layout_width="300dp"
-                android:layout_height="800dp"
+                android:layout_height="500dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
@@ -100,7 +100,7 @@
                 android:text="@string/default_lyrics"
                 android:textSize="18sp" />
         </LinearLayout>
-    </ScrollView>
+    </com.example.pinkorange.vibrato.FixedTopFadeEdgeScrollView>
 
     <com.example.pinkorange.vibrato.BarVisualizer
         android:id="@+id/visualizer"
@@ -132,8 +132,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.207" />
+        app:layout_constraintTop_toBottomOf="@+id/music_prograss_bar"
+        app:layout_constraintVertical_bias="0.008" />
 
     <Button
         android:id="@+id/skip"
@@ -146,26 +146,26 @@
         android:background="@drawable/round_skip_next_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.327"
+        app:layout_constraintHorizontal_bias="0.353"
         app:layout_constraintStart_toEndOf="@+id/play"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.207" />
+        app:layout_constraintTop_toBottomOf="@+id/music_prograss_bar"
+        app:layout_constraintVertical_bias="0.008" />
 
     <Button
         android:id="@+id/prev"
         android:layout_width="42dp"
         android:layout_height="42dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/round_skip_previous_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/play"
-        app:layout_constraintHorizontal_bias="0.619"
+        app:layout_constraintHorizontal_bias="0.61"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.207" />
+        app:layout_constraintTop_toBottomOf="@+id/music_prograss_bar"
+        app:layout_constraintVertical_bias="0.008" />
 
     <SeekBar
         android:id="@+id/music_prograss_bar"

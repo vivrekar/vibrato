@@ -21,7 +21,6 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -78,7 +77,7 @@ public class LiveWithSettings extends AppCompatActivity
     private TextView title;
     private TextView artist;
 
-    private ScrollView lyricsScoll;
+    private FixedTopFadeEdgeScrollView lyricsScoll;
 
     private Thread seekBarThread;
     private SeekBar mSeekBar;
@@ -98,7 +97,6 @@ public class LiveWithSettings extends AppCompatActivity
             allSongId = (ArrayList<Uri>) intent.getSerializableExtra("songId");
             recordedSongId = Uri.parse(recordedSong.data);
             if (recordedSongId == null) {
-                Log.e("App", "Failed to pass the current song through activities");
             }
         }
 
@@ -514,11 +512,10 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void scorllVisablilty(Boolean how){
-        lyricsScoll.setEnabled(how);
         lyricsScoll.setVerticalScrollBarEnabled(how);
         lyricsScoll.setHorizontalScrollBarEnabled(how);
-        lyricsScoll.setVerticalFadingEdgeEnabled(how);
         lyricsScoll.setHorizontalFadingEdgeEnabled(how);
+        lyricsScoll.setScrolling(how);
 
     }
 
