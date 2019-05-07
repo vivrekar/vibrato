@@ -20,7 +20,7 @@
             android:id="@+id/visualizer_switch"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:title="Polylen Mode"
+            android:title="Polylens Mode"
             app:actionLayout="@layout/switch_item"
             app:showAsAction="always" />
 

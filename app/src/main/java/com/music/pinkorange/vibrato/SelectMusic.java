@@ -44,6 +44,7 @@ public class SelectMusic extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_music);
+        //A thread that could be useful for future extension (stop and go back)
         thread = new Thread(){
             @Override
             public void run() {
@@ -73,11 +74,13 @@ public class SelectMusic extends AppCompatActivity {
         loadAudio();
         if(audioList == null){
             Toast toast = Toast.makeText(getApplicationContext(),
-                    "There is no local music...",
+                    "No Local Musics Found... Displaying Default Music! ",
                     Toast.LENGTH_SHORT);
             toast.show();
-            thread.start();
-            return;
+            //thread.start();
+            audioList = new ArrayList<>();
+            audioList.add(new Audio("android.resource://" + getPackageName() + "/" + R.raw.croatian,
+                    "croatian rhapsody", "no Album", "Maksim Mrvica"));
         }
 
         for(Audio a : audioList){
