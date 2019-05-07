@@ -15,6 +15,7 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.LoudnessEnhancer;
+import android.media.audiofx.Visualizer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -46,6 +47,8 @@ public class LiveWithSettings extends AppCompatActivity
     private final int RECORD_THRESHOLD = 130;
 
     private BarVisualizer mVisualizer;
+    private PerceptualVisualizer mVisualizer2View;
+    private Visualizer mVisualizer2;
 
     private MediaPlayer mAudioPlayer;
     private Audio recordedSong;
@@ -64,6 +67,9 @@ public class LiveWithSettings extends AppCompatActivity
     private boolean lyricsIsChecked;
     private Switch lyricsSwitch;
     private MenuItem lyricsItem;
+
+    private Switch visualizerSwitch;
+    private MenuItem visualizerItem;
 
     private SeekBar vibrate_seek, loudness, bass;
     private BassBoost mBassBoost;
@@ -108,12 +114,15 @@ public class LiveWithSettings extends AppCompatActivity
         navigationView = findViewById(R.id.nav_view);
         lyricsSwitch = (Switch) navigationView.getMenu().getItem(1).getActionView();
         lyricsItem = navigationView.getMenu().getItem(1);
+        visualizerSwitch = (Switch) navigationView.getMenu().getItem(2).getActionView();
+        visualizerItem = navigationView.getMenu().getItem(2);
 
-        vibrate_seek = (SeekBar) navigationView.getMenu().getItem(3).getActionView();
-        bass = (SeekBar) navigationView.getMenu().getItem(5).getActionView();
-        loudness = (SeekBar) navigationView.getMenu().getItem(7).getActionView();
+        vibrate_seek = (SeekBar) navigationView.getMenu().getItem(4).getActionView();
+        bass = (SeekBar) navigationView.getMenu().getItem(6).getActionView();
+        loudness = (SeekBar) navigationView.getMenu().getItem(8).getActionView();
 
         mVisualizer = findViewById(R.id.visualizer);
+        mVisualizer2View = findViewById(R.id.visualizer2);
 
         playButton = findViewById(R.id.play);
         skipButton = findViewById(R.id.skip);
@@ -159,6 +168,7 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void continueInitialization() {
+        initializeVisualizerAndFeedback();
         setSupportActionBar(toolbar);
         setActionBarToggle();
         navigationView.setNavigationItemSelectedListener(this);
@@ -166,13 +176,13 @@ public class LiveWithSettings extends AppCompatActivity
         setVibrationSeekBar();
         setBassSeekBar();
         setLoudnessSeekBar();
-        initializeVisualizerAndFeedback();
         initializeSongSeekBar();
         setMusicControlButton();
 
         if (!isLive) {
             reenableElements();
             setSongDetails();
+            setVisualizerDetails();
             bassBoost();
             loudnessEnhance();
         } else {
@@ -184,6 +194,8 @@ public class LiveWithSettings extends AppCompatActivity
         title.setText(R.string.live_music_title);
         lyricsItem.setVisible(false);
         scorllVisablilty(false);
+        visualizerItem.setVisible(false);
+        mVisualizer2View.setVisibility(View.GONE);
         mSeekBar.setVisibility(View.GONE);
     }
 
@@ -275,6 +287,10 @@ public class LiveWithSettings extends AppCompatActivity
             FetchLyrics lyricsHelper = new FetchLyrics(recordedSong.title, recordedSong.artist, musicContext);
             lyricsHelper.findTrackIdandLyrics(lyrics);
         }
+        bassBoost();
+        loudnessEnhance();
+        mVisualizer.setAudioSessionId(curAudioSessionId, LiveWithSettings.this,
+                RECORD_THRESHOLD, vibrate_seek.getProgress() / 100.0);
     }
 
     private void initializeVisualizerAndFeedback() {
@@ -285,6 +301,30 @@ public class LiveWithSettings extends AppCompatActivity
         }
     }
 
+    private void setupVisualizer2FxAndUI(int curAudioSessionId) {
+
+        // Create the Visualizer object and attach it to our media player.
+        mVisualizer2 = new Visualizer(curAudioSessionId);
+        mVisualizer2.setEnabled(false);
+        // Get length of audio to be visualized; must be power of 2 for FFT.
+        int len_of_audio = Visualizer.getCaptureSizeRange()[1];
+        // Pass the length of audio file to Visualizer.
+        mVisualizer2.setCaptureSize(len_of_audio);
+        // Sets a listener.
+        mVisualizer2.setDataCaptureListener(
+                new Visualizer.OnDataCaptureListener() {
+                    public void onWaveFormDataCapture(Visualizer visualizer,
+                                                      byte[] bytes, int samplingRate) {
+                    }
+
+                    public void onFftDataCapture(Visualizer visualizer,
+                                                 byte[] bytes, int samplingRate) {
+                        mVisualizer2View.updateVisualizerFFT(bytes);
+                    }
+                }, Visualizer.getMaxCaptureRate() / 2, false, true);
+        mVisualizer2.setEnabled(true);
+    }
+
     private void liveVisualizerAndFeedback() {
         liveMusicAnalysis = new LiveMusicAnalysis(this);
         liveMusicThread = new Thread(liveMusicAnalysis);
@@ -292,6 +332,7 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void recordedVisualizerAndFeedback() {
+        mVisualizer2View.setVisibility(View.GONE);
         mAudioPlayer = MediaPlayer.create(this, recordedSongId);
 
         songDuration = mAudioPlayer.getDuration() / 1000.0;
@@ -394,6 +435,8 @@ public class LiveWithSettings extends AppCompatActivity
             mAudioPlayer.release();
         if (mVisualizer != null)
             mVisualizer.release();
+        if (mVisualizer2 != null)
+            mVisualizer2.release();
         if (liveMusicAnalysis != null && isLive)
             liveMusicAnalysis.release();
     }
@@ -482,6 +525,30 @@ public class LiveWithSettings extends AppCompatActivity
             public void onStopTrackingTouch(SeekBar seekBar) {
                 mVisualizer.setAudioSessionId(curAudioSessionId, LiveWithSettings.this,
                         RECORD_THRESHOLD, vibrate_seek.getProgress() / 100.0);
+            }
+        });
+    }
+
+    private void setVisualizerDetails(){
+        visualizerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    mVisualizer.setVisibility(View.GONE);
+                    mVisualizer.release();
+                    mVisualizer2View.setVisibility(View.VISIBLE);
+                    disableElements();
+                    if(curAudioSessionId != -1){
+                        setupVisualizer2FxAndUI(curAudioSessionId);
+                    }
+                }else{
+                    mVisualizer2View.setVisibility(View.GONE);
+                    reenableElements();
+                    mVisualizer.setVisibility(View.VISIBLE);
+                    mVisualizer2.release();
+                    mVisualizer.setAudioSessionId(curAudioSessionId, LiveWithSettings.this,
+                            RECORD_THRESHOLD, vibrate_seek.getProgress() / 100.0);
+                }
             }
         });
     }
