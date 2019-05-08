@@ -578,11 +578,11 @@ public class LiveWithSettings extends AppCompatActivity
     }
 
     private void scorllVisablilty(Boolean how){
-        lyricsScoll.setVerticalScrollBarEnabled(how);
-        lyricsScoll.setHorizontalScrollBarEnabled(how);
-        lyricsScoll.setHorizontalFadingEdgeEnabled(how);
-        lyricsScoll.setScrolling(how);
-
+        if (how){
+            lyricsScoll.setVisibility(View.VISIBLE);
+        } else{
+            lyricsScoll.setVisibility(View.GONE);
+        }
     }
 
     private void setActionBarToggle() {
